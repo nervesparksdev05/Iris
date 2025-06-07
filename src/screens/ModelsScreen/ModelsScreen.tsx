@@ -5,6 +5,7 @@ import {
   Platform,
   Alert,
   KeyboardAvoidingView,
+  TextInput,
 } from 'react-native';
 
 import {toJS, reaction} from 'mobx';
@@ -41,6 +42,7 @@ export const ModelsScreen: React.FC = observer(() => {
   const [_, setTrigger] = useState<boolean>(false);
   const [selectedModel, setSelectedModel] = useState<Model | undefined>();
   const [settingsVisible, setSettingsVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Centralized error state tracking - derive directly from MobX stores
   const [activeError, setActiveError] = useState<ErrorState | null>(null);
@@ -276,22 +278,49 @@ export const ModelsScreen: React.FC = observer(() => {
 
   const renderGroupHeader = ({item: group}) => {
     const isExpanded = expandedGroups[group.type];
+
     const displayName = filters.includes('grouped')
       ? group.type
       : getGroupDisplayName(group.type);
+
     const description =
       !filters.includes('grouped') &&
       group.type === UIStore.GROUP_KEYS.AVAILABLE_TO_DOWNLOAD
         ? l10n.models.labels.useAddButtonForMore
         : undefined;
+
+    const filteredItems = group.items.filter(subItem =>
+      subItem.name.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+
+    if (filteredItems.length === 0) return null;
+
     return (
       <ModelAccordion
         group={{...group, type: displayName}}
         expanded={isExpanded}
         description={description}
         onPress={() => toggleGroup(group.type)}>
+        <TextInput
+          placeholder="Search Models"
+          placeholderTextColor="#aaa"
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          style={{
+            color: '#fff',
+            borderRadius: 8,
+            paddingHorizontal: 16,
+            paddingVertical: 10,
+            marginBottom: 12,
+            fontSize: 15,
+            borderWidth: 1,
+            borderColor: '#63666f',
+            backgroundColor: '#0f223b',
+          }}
+        />
+
         <FlatList
-          data={group.items}
+          data={filteredItems}
           keyExtractor={subItem => subItem.id}
           renderItem={({item: subItem}) => (
             <ModelCard

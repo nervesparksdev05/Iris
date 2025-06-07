@@ -39,6 +39,7 @@ import {
   // Dev tools screen. Only available in debug mode.
   DevToolsScreen,
 } from './src/screens';
+import {ModelHeader} from './src/screens/ModelsScreen/ModelHeader/ModelHeader';
 
 // Check if app is in debug mode
 const isDebugMode = __DEV__;
@@ -90,11 +91,12 @@ const App = observer(() => {
                       name={ROUTES.MODELS}
                       component={gestureHandlerRootHOC(ModelsScreen)}
                       options={{
-                        headerRight: () => <ModelsHeaderRight />,
-                        headerStyle: styles.headerWithoutDivider,
-                        title: currentL10n.screenTitles.models,
+                        header: ({navigation}) => (
+                          <ModelHeader navigation={navigation} />
+                        ),
                       }}
                     />
+
                     <Drawer.Screen
                       name={ROUTES.PALS}
                       component={gestureHandlerRootHOC(PalsScreen)}

@@ -1,0 +1,54 @@
+import React from 'react';
+import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
+import {useTheme} from 'react-native-paper';
+import {SafeAreaView} from 'react-native-safe-area-context';
+
+export const ModelHeader = ({navigation}) => {
+  const theme = useTheme();
+
+  return (
+    <SafeAreaView edges={['top']} style={styles.safeArea}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Image
+            source={require('../../../assets/appIcons/backIcon.png')}
+            style={styles.headerIcon}
+          />
+        </TouchableOpacity>
+
+        <Text style={styles.headerTitle}>Models</Text>
+
+        <TouchableOpacity onPress={() => {}}>
+          <Image
+            source={require('../../../assets/appIcons/refreshIcon.png')}
+            style={styles.headerIcon}
+          />
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  safeArea: {
+    backgroundColor: '#061529',
+  },
+  header: {
+    height: 56,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#061529',
+  },
+  headerTitle: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: '600',
+  },
+  headerIcon: {
+    width: 24,
+    height: 24,
+    tintColor: '#fff',
+  },
+});
