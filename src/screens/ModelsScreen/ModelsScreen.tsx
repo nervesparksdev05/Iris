@@ -6,6 +6,7 @@ import {
   Alert,
   KeyboardAvoidingView,
   TextInput,
+  Text,
 } from 'react-native';
 
 import {toJS, reaction} from 'mobx';
@@ -34,6 +35,7 @@ import {uiStore, modelStore, hfStore, UIStore} from '../../store';
 import {L10nContext} from '../../utils';
 import {Model, ModelOrigin} from '../../utils/types';
 import {ErrorState} from '../../utils/errors';
+import SearchBox from './SearchBox';
 
 export const ModelsScreen: React.FC = observer(() => {
   const l10n = useContext(L10nContext);
@@ -277,8 +279,6 @@ export const ModelsScreen: React.FC = observer(() => {
   //const {scrollRef, moveScrollToDown} = useMoveScroll();
 
   const renderGroupHeader = ({item: group}) => {
-    const isExpanded = expandedGroups[group.type];
-
     const displayName = filters.includes('grouped')
       ? group.type
       : getGroupDisplayName(group.type);
@@ -298,27 +298,9 @@ export const ModelsScreen: React.FC = observer(() => {
     return (
       <ModelAccordion
         group={{...group, type: displayName}}
-        expanded={isExpanded}
-        description={description}
-        onPress={() => toggleGroup(group.type)}>
-        <TextInput
-          placeholder="Search Models"
-          placeholderTextColor="#aaa"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          style={{
-            color: '#fff',
-            borderRadius: 8,
-            paddingHorizontal: 16,
-            paddingVertical: 10,
-            marginBottom: 12,
-            fontSize: 15,
-            borderWidth: 1,
-            borderColor: '#63666f',
-            backgroundColor: '#0f223b',
-          }}
-        />
-
+        expanded={true} // always expanded
+        onPress={() => {}} // disable toggle
+      >
         <FlatList
           data={filteredItems}
           keyExtractor={subItem => subItem.id}
@@ -354,6 +336,10 @@ export const ModelsScreen: React.FC = observer(() => {
           onRetry={handleRetryAction}
         />
       )}
+
+      <SearchBox searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+
+      <Text style={styles.sectionTitle}>Suggested Models</Text>
 
       <FlatList
         testID="flat-list"

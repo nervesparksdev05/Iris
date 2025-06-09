@@ -43,8 +43,9 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: '#fff',
-    fontSize: 20,
-    fontWeight: '600',
+    fontSize: 23,
+    fontWeight: '500',
+    marginRight: 150,
   },
   headerIcon: {
     width: 24,

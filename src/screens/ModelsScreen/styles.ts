@@ -24,4 +24,9 @@ export const createStyles = (theme: Theme) =>
       borderRadius: 8,
       marginHorizontal: 2,
     },
+    sectionTitle: {
+      color: '#888',
+      fontSize: 14,
+      marginBottom: 12,
+    },
   });

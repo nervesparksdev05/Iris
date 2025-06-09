@@ -21,7 +21,8 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
   props => {
     const [menuVisible, setMenuVisible] = useState<string | null>(null);
     const [menuPosition, setMenuPosition] = useState({x: 0, y: 0});
-    const [sessionToRename, setSessionToRename] = useState<SessionMetaData | null>(null);
+    const [sessionToRename, setSessionToRename] =
+      useState<SessionMetaData | null>(null);
 
     const theme = useTheme();
     const styles = createStyles(theme);
@@ -29,7 +30,9 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
 
     useEffect(() => {
       chatSessionStore.loadSessionList();
-      chatSessionStore.setDateGroupNames(l10n.components.sidebarContent.dateGroups);
+      chatSessionStore.setDateGroupNames(
+        l10n.components.sidebarContent.dateGroups,
+      );
     }, [l10n.components.sidebarContent.dateGroups]);
 
     const openMenu = (sessionId: string, event: any) => {
@@ -76,7 +79,7 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
       {
         title: 'Change Parameters',
         icon: require('../../assets/appIcons/parameterIcon.png'),
-        route: ROUTES.MODELS,
+        route: ROUTES.CHANGE_PARAMETER,
       },
       {
         title: 'Benchmark',
@@ -91,7 +94,7 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
       {
         title: 'Report',
         icon: require('../../assets/appIcons/reportIcon.png'),
-        route: ROUTES.APP_INFO,
+        route: ROUTES.REPORT,
       },
       // {
       //   title: 'Settings',
@@ -102,37 +105,79 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
 
     return (
       <GestureHandlerRootView style={{flex: 1}}>
-        <ScrollView contentContainerStyle={{backgroundColor: '#0D122B', flexGrow: 1, paddingHorizontal: 20, paddingTop: 40}}>
+        <ScrollView
+          contentContainerStyle={{
+            backgroundColor: '#0D122B',
+            flexGrow: 1,
+            paddingHorizontal: 20,
+            paddingTop: 40,
+          }}>
           <View style={styles.navContainer}>
-          <TouchableOpacity onPress={() => props.navigation.closeDrawer()}>
-            <Image source={require('../../assets/appIcons/backIcon.png')} style={{width: 24, height: 24, tintColor: 'white'}} />
-          </TouchableOpacity>
-          <Text style={{color: 'white', fontSize: 26, fontWeight: '500', marginVertical: 20}}>Settings</Text>
+            <TouchableOpacity onPress={() => props.navigation.closeDrawer()}>
+              <Image
+                source={require('../../assets/appIcons/backIcon.png')}
+                style={styles.navBackIcon}
+              />
+            </TouchableOpacity>
+            <Text style={styles.heading}>Settings</Text>
           </View>
 
+          <View
+            style={{
+              backgroundColor: '#1A1F3D',
+              borderRadius: 12,
+              paddingVertical: 4,
+              marginBottom: 20,
+            }}>
+            {menuItems.map((item, index) => (
+              <View key={index}>
+                <TouchableOpacity
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    paddingVertical: 14,
+                    paddingHorizontal: 16,
+                  }}
+                  onPress={() => props.navigation.navigate(item.route)}>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Image
+                      source={item.icon}
+                      style={{
+                        width: 22,
+                        height: 22,
+                        marginRight: 15,
+                        resizeMode: 'contain',
+                        tintColor: 'white',
+                      }}
+                    />
+                    <Text style={{color: 'white', fontSize: 16}}>
+                      {item.title}
+                    </Text>
+                  </View>
+                  <Image
+                    source={require('../../assets/appIcons/nextIcon.png')}
+                    style={{
+                      width: 30,
+                      height: 30,
+                      resizeMode: 'contain',
+                      tintColor: '#aaa',
+                    }}
+                  />
+                </TouchableOpacity>
 
-                  
-
-          {menuItems.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                backgroundColor: '#1A1F3D',
-                padding: 15,
-                borderRadius: 10,
-                marginBottom: 12,
-              }}
-              onPress={() => props.navigation.navigate(item.route)}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Image source={item.icon} style={{width: 24, height: 24, marginRight: 15, resizeMode: 'contain'}} />
-                <Text style={{color: 'white', fontSize: 16}}>{item.title}</Text>
+                {index < menuItems.length - 1 && (
+                  <View
+                    style={{
+                      height:1,
+                      backgroundColor: '#2C314C',
+                      marginHorizontal: 16,
+                    }}
+                  />
+                )}
               </View>
-              <Image source={require('../../assets/appIcons/nextIcon.png')} style={{width: 16, height: 16, resizeMode: 'contain'}} />
-            </TouchableOpacity>
-          ))}
+            ))}
+          </View>
         </ScrollView>
 
         <RenameModal

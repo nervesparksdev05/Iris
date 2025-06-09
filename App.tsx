@@ -40,6 +40,8 @@ import {
   DevToolsScreen,
 } from './src/screens';
 import {ModelHeader} from './src/screens/ModelsScreen/ModelHeader/ModelHeader';
+import ReportScreen from './src/screens/ReportScreen/ReportScreen';
+import ParametersPage from './src/appComponents/Parameter';
 
 // Check if app is in debug mode
 const isDebugMode = __DEV__;
@@ -97,14 +99,14 @@ const App = observer(() => {
                       }}
                     />
 
-                    <Drawer.Screen
+                    {/* <Drawer.Screen
                       name={ROUTES.PALS}
                       component={gestureHandlerRootHOC(PalsScreen)}
                       options={{
                         headerStyle: styles.headerWithoutDivider,
                         title: currentL10n.screenTitles.pals,
                       }}
-                    />
+                    /> */}
                     <Drawer.Screen
                       name={ROUTES.BENCHMARK}
                       component={gestureHandlerRootHOC(BenchmarkScreen)}
@@ -125,8 +127,22 @@ const App = observer(() => {
                       name={ROUTES.APP_INFO}
                       component={gestureHandlerRootHOC(AboutScreen)}
                       options={{
-                        headerStyle: styles.headerWithoutDivider,
-                        title: currentL10n.screenTitles.appInfo,
+                        headerShown: false,
+                      }}
+                    />
+                    <Drawer.Screen
+                      name={ROUTES.REPORT}
+                      component={gestureHandlerRootHOC(ReportScreen)}
+                      options={{
+                        headerShown: false,
+                      }}
+                    />
+
+                    <Drawer.Screen
+                      name={ROUTES.CHANGE_PARAMETER}
+                      component={gestureHandlerRootHOC(ParametersPage)}
+                      options={{
+                        headerShown: false,
                       }}
                     />
 
