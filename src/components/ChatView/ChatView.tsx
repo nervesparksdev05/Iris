@@ -843,7 +843,7 @@ export const ChatView = observer(
                     transform: [{translateY}],
                     zIndex: 10,
                   },
-                  {backgroundColor: inputBackgroundColor},
+                  {backgroundColor: '#000'},
                 ]}>
                 <ChatInput
                   {...{

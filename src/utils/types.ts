@@ -328,6 +328,7 @@ export interface Model {
   hfModelFile?: ModelFile;
   hfModel?: HuggingFaceModel;
   hash?: string;
+  isDefault: boolean;
 }
 
 export type RootDrawerParamList = {

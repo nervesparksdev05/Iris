@@ -18,6 +18,7 @@ import {chatSessionStore, modelStore, palStore, uiStore} from '../../store';
 
 import {MessageType} from '../../utils/types';
 import {L10nContext, unwrap, UserContext} from '../../utils';
+import {Image} from 'react-native';
 
 import {
   AttachmentButton,
@@ -200,7 +201,7 @@ export const ChatInput = observer(
                 )
               ))}
             <View style={styles.inputWrapper}>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={[
                   styles.palBtn,
                   {
@@ -220,7 +221,11 @@ export const ChatInput = observer(
                   }}>
                   <ChevronUpIcon stroke={theme.colors.onSurface} />
                 </Animated.View>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
+              <Image
+                source={require('../../assets/appIcons/micIcon.png')}
+                style={styles.imageIcon}
+              />
               <View style={styles.inputInnerContainer}>
                 {activePal?.name && hasActiveModel && (
                   <Text

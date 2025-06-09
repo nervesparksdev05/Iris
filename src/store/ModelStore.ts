@@ -41,6 +41,7 @@ import {
 import {ErrorState, createErrorState} from '../utils/errors';
 
 class ModelStore {
+  isHydrated: boolean = false;
   models: Model[] = [];
   version: number | undefined = undefined; // Persisted version
 
@@ -87,7 +88,7 @@ class ModelStore {
   downloadError: ErrorState | null = null;
 
   constructor() {
-    makeAutoObservable(this, {activeModel: computed});
+    makeAutoObservable(this, {activeModel: computed, defaultModel: computed});
     this.initializeThreadCount();
     makePersistable(this, {
       name: 'ModelStore',
@@ -104,9 +105,14 @@ class ModelStore {
         'cache_type_v',
         'n_batch',
         'n_ubatch',
+        'activeModelId',
+        'lastUsedModelId',
       ],
       storage: AsyncStorage,
     }).then(() => {
+      runInAction(() => {
+        this.isHydrated = true;
+      });
       this.initializeStore();
     });
 
@@ -370,8 +376,12 @@ class ModelStore {
       this.appState.match(/inactive|background/) &&
       nextAppState === 'active'
     ) {
-      if (this.useAutoRelease) {
-        await this.reinitializeContext();
+      // App is coming to foreground
+      if (this.activeModelId) {
+        const model = this.models.find(m => m.id === this.activeModelId);
+        if (model) {
+          await this.initContext(model);
+        }
       }
     } else if (
       this.appState === 'active' &&
@@ -735,7 +745,10 @@ class ModelStore {
    * @returns The new model that was added.
    */
   addHFModel = async (hfModel: HuggingFaceModel, modelFile: ModelFile) => {
-    const newModel = hfAsModel(hfModel, modelFile);
+    const newModel = {
+      ...hfAsModel(hfModel, modelFile),
+      isDefault: false,
+    };
     const storeModel = this.models.find(m => m.id === newModel.id);
     if (storeModel) {
       // Model already exists, return the existing model
@@ -776,12 +789,47 @@ class ModelStore {
       stopWords: [...(defaultSettings?.completionParams?.stop || [])],
       defaultCompletionSettings: defaultSettings.completionParams,
       completionSettings: {...defaultSettings.completionParams},
+      isDefault: false,
     };
 
     runInAction(() => {
       this.models.push(model);
       this.refreshDownloadStatuses();
     });
+  };
+
+  get defaultModel(): Model | undefined {
+    return this.models.find(model => model.isDefault);
+  }
+
+  setDefaultModel = async (selectedModelId: string) => {
+    try {
+      runInAction(() => {
+        // Find the model in the store first
+        const selectedModel = this.models.find(m => m.id === selectedModelId);
+        if (!selectedModel) return;
+
+        // Unset previous default model
+        this.models.forEach(model => {
+          model.isDefault = false;
+        });
+
+        // Set new default
+        selectedModel.isDefault = true;
+
+        // Also set as active model
+        this.activeModelId = selectedModelId;
+      });
+
+      // Initialize context with the new default model
+      const model = this.models.find(m => m.id === selectedModelId);
+      if (model) {
+        await this.initContext(model);
+      }
+    } catch (error) {
+      console.error('Failed to set default model:', error);
+      throw error;
+    }
   };
 
   updateModelChatTemplate = (

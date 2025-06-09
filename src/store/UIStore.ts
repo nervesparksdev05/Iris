@@ -39,6 +39,8 @@ export class UIStore {
 
   iOSBackgroundDownloading = true;
 
+  isHydrated: boolean = false;
+
   benchmarkShareDialog = {
     shouldShow: true,
   };
@@ -61,6 +63,10 @@ export class UIStore {
         '_language',
       ],
       storage: AsyncStorage,
+    }).then(() => {
+      runInAction(() => {
+        this.isHydrated = true;
+      });
     });
 
     // backwards compatibility. Removed this from the ui settings screen.

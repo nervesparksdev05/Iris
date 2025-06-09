@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Dimensions, StyleSheet} from 'react-native';
+import {Dimensions, StyleSheet, View, Alert} from 'react-native';
 
 import {observer} from 'mobx-react';
 import {NavigationContainer} from '@react-navigation/native';
@@ -12,8 +12,9 @@ import {
   gestureHandlerRootHOC,
   GestureHandlerRootView,
 } from 'react-native-gesture-handler';
+import {BlurView} from '@react-native-community/blur';
 
-import {uiStore} from './src/store';
+import {modelStore, uiStore} from './src/store';
 import {useTheme} from './src/hooks';
 import {Theme} from './src/utils/types';
 
@@ -22,32 +23,26 @@ import {initLocale} from './src/utils';
 import {L10nContext} from './src/utils';
 import {ROUTES} from './src/utils/navigationConstants';
 
-import {
-  SidebarContent,
-  ModelsHeaderRight,
-  HeaderLeft,
-  AppWithMigration,
-} from './src/components';
+import LinearGradient from 'react-native-linear-gradient';
+
+import {SidebarContent, HeaderLeft, AppWithMigration} from './src/components';
 import {
   ChatScreen,
   ModelsScreen,
   SettingsScreen,
   BenchmarkScreen,
   AboutScreen,
-  PalsScreen,
-
-  // Dev tools screen. Only available in debug mode.
   DevToolsScreen,
 } from './src/screens';
 import {ModelHeader} from './src/screens/ModelsScreen/ModelHeader/ModelHeader';
 import ReportScreen from './src/screens/ReportScreen/ReportScreen';
 import ParametersPage from './src/appComponents/Parameter';
+import ModelLoadingScreen from './src/screens/ModelLoadingScreen/ModelLoadingScreen';
+import { DownloadModelScreen } from './src/screens/DownloadModelScreen/DownloadModelScreen';
+import { DownloadModelHome } from './src/screens/DownloadModelScreen/DownloadModelsHome';
 
-// Check if app is in debug mode
 const isDebugMode = __DEV__;
-
 const Drawer = createDrawerNavigator();
-
 const screenWidth = Dimensions.get('window').width;
 
 const App = observer(() => {
@@ -55,40 +50,127 @@ const App = observer(() => {
   const styles = createStyles(theme);
   const currentL10n = l10n[uiStore.language];
 
-  // Initialize locale with the current language
+  const [isModelLoading, setIsModelLoading] = React.useState(false);
+  const [loadingModelName, setLoadingModelName] = React.useState('');
+  const [showDownloadScreen, setShowDownloadScreen] = React.useState(false);
+
+  const autoLoadModel = async () => {
+    try {
+      if (!modelStore || !uiStore) return;
+
+      const availableModels = modelStore.availableModels;
+
+      const tryLoadModel = async (model: any) => {
+        setIsModelLoading(true);
+        setLoadingModelName(model.name);
+        await modelStore.initContext(model);
+        modelStore.setActiveModel(model.id);
+        setIsModelLoading(false);
+      };
+
+      const lastUsedModel = availableModels.find(
+        m => m.id === modelStore.lastUsedModelId,
+      );
+      if (lastUsedModel) return await tryLoadModel(lastUsedModel);
+
+      const defaultModel = availableModels.find(m => m.isDefault);
+      if (defaultModel) return await tryLoadModel(defaultModel);
+
+      if (availableModels.length > 0) {
+        return await tryLoadModel(availableModels[0]);
+      }
+
+      setShowDownloadScreen(true);
+    } catch (error: any) {
+      setIsModelLoading(false);
+      console.error('Error loading model:', error);
+      Alert.alert(
+        'Error Loading Model',
+        `Failed to load model: ${error.message}`,
+        [{text: 'OK'}],
+      );
+    }
+  };
+
+  const waitForHydration = async () => {
+    while (!modelStore.isHydrated || !uiStore.isHydrated) {
+      await new Promise(resolve => setTimeout(resolve, 50));
+    }
+  };
+
   React.useEffect(() => {
-    initLocale(uiStore.language);
+    const initializeApp = async () => {
+      await initLocale(uiStore.language);
+      await waitForHydration();
+      await autoLoadModel();
+    };
+    initializeApp();
   }, []);
+
 
   return (
     <GestureHandlerRootView style={styles.root}>
+      <LinearGradient
+        colors={['#060A15', '#051632']}
+        style={styles.gradientBackground}
+        start={{x: 0.5, y: 0}}
+        end={{x: 0.5, y: 1}}>
       <SafeAreaProvider>
+
         <KeyboardProvider statusBarTranslucent navigationBarTranslucent>
           <PaperProvider theme={theme}>
             <L10nContext.Provider value={currentL10n}>
               <NavigationContainer>
                 <BottomSheetModalProvider>
                   <Drawer.Navigator
-                    useLegacyImplementation={false}
                     screenOptions={{
                       headerLeft: () => <HeaderLeft />,
-                      drawerStyle: {
-                        width: '100%',
-                      },
-                      headerStyle: {
-                        backgroundColor: theme.colors.background,
-                      },
+                      drawerStyle: {width: screenWidth},
+                      headerStyle: {backgroundColor: 'transparent'},
                       headerTintColor: theme.colors.onBackground,
                       headerTitleStyle: styles.headerTitle,
+                      headerBackground: () => (
+                          <LinearGradient
+                            colors={['rgba(6, 10, 21, 0.9)', 'rgba(5, 22, 50, 0.9)']}
+                            style={StyleSheet.absoluteFill}
+                            start={{x: 0.5, y: 0}}
+                            end={{x: 0.5, y: 1}}
+                          />
+                        ),
                     }}
                     drawerContent={props => <SidebarContent {...props} />}>
                     <Drawer.Screen
                       name={ROUTES.CHAT}
-                      component={gestureHandlerRootHOC(ChatScreen)}
-                      options={{
-                        headerShown: false,
-                      }}
+                      component={() => (
+                        <>
+                          <ChatScreen />
+                          {showDownloadScreen && (
+                            <View style={StyleSheet.absoluteFillObject}>
+                              <BlurView
+                                style={StyleSheet.absoluteFill}
+                                blurType="light"
+                                blurAmount={1}
+                                reducedTransparencyFallbackColor="white"
+                              />
+                              <DownloadModelHome/>
+                            </View>
+                          )}
+                          {isModelLoading &&(
+                            <View style={StyleSheet.absoluteFillObject}>
+                              <BlurView
+                                style={StyleSheet.absoluteFill}
+                                blurType="light"
+                                blurAmount={1}
+                                reducedTransparencyFallbackColor="white"
+                              />
+                              <ModelLoadingScreen modelName={loadingModelName} />
+                            </View>
+                          )}
+                        </>
+                      )}
+                      options={{headerShown: false}}
                     />
+
                     <Drawer.Screen
                       name={ROUTES.MODELS}
                       component={gestureHandlerRootHOC(ModelsScreen)}
@@ -99,14 +181,7 @@ const App = observer(() => {
                       }}
                     />
 
-                    {/* <Drawer.Screen
-                      name={ROUTES.PALS}
-                      component={gestureHandlerRootHOC(PalsScreen)}
-                      options={{
-                        headerStyle: styles.headerWithoutDivider,
-                        title: currentL10n.screenTitles.pals,
-                      }}
-                    /> */}
+                    {/* Other Drawer Screens */}
                     <Drawer.Screen
                       name={ROUTES.BENCHMARK}
                       component={gestureHandlerRootHOC(BenchmarkScreen)}
@@ -126,27 +201,18 @@ const App = observer(() => {
                     <Drawer.Screen
                       name={ROUTES.APP_INFO}
                       component={gestureHandlerRootHOC(AboutScreen)}
-                      options={{
-                        headerShown: false,
-                      }}
+                      options={{headerShown: false}}
                     />
                     <Drawer.Screen
                       name={ROUTES.REPORT}
                       component={gestureHandlerRootHOC(ReportScreen)}
-                      options={{
-                        headerShown: false,
-                      }}
+                      options={{headerShown: false}}
                     />
-
                     <Drawer.Screen
                       name={ROUTES.CHANGE_PARAMETER}
                       component={gestureHandlerRootHOC(ParametersPage)}
-                      options={{
-                        headerShown: false,
-                      }}
+                      options={{headerShown: false}}
                     />
-
-                    {/* Only show Dev Tools screen in debug mode */}
                     {isDebugMode && (
                       <Drawer.Screen
                         name={ROUTES.DEV_TOOLS}
@@ -164,36 +230,33 @@ const App = observer(() => {
           </PaperProvider>
         </KeyboardProvider>
       </SafeAreaProvider>
+      </LinearGradient>
     </GestureHandlerRootView>
   );
 });
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
-    root: {
+    root: {flex: 1},
+    gradientBackground: {
       flex: 1,
     },
     headerWithoutDivider: {
       elevation: 0,
       shadowOpacity: 0,
       borderBottomWidth: 0,
-      backgroundColor: theme.colors.background,
-    },
-    headerWithDivider: {
-      backgroundColor: theme.colors.background,
+      backgroundColor: 'transparent', // Make transparent
     },
     headerTitle: {
       ...theme.fonts.titleSmall,
+      color: 'white', // Ensure text is visible
     },
   });
 
-// Wrap the App component with AppWithMigration to show migration UI when needed
-const AppWithMigrationWrapper = () => {
-  return (
-    <AppWithMigration>
-      <App />
-    </AppWithMigration>
-  );
-};
+const AppWithMigrationWrapper = () => (
+  <AppWithMigration>
+    <App />
+  </AppWithMigration>
+);
 
 export default AppWithMigrationWrapper;

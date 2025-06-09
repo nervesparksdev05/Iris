@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  ScrollView,
 } from 'react-native';
 import {observer} from 'mobx-react-lite';
 import {useNavigation} from '@react-navigation/native';
@@ -22,18 +23,17 @@ import {
   ActivityIndicator,
   Snackbar,
 } from 'react-native-paper';
-import {Divider} from '../../../components';
-import {useTheme, useMemoryCheck, useStorageCheck} from '../../../hooks';
-import {uiStore, modelStore} from '../../../store';
-import {Model, ModelOrigin, RootDrawerParamList} from '../../../utils/types';
+import {useTheme, useMemoryCheck, useStorageCheck} from '../../hooks';
+import {uiStore, modelStore} from '../../store';
+import {Model, ModelOrigin, RootDrawerParamList} from '../../utils/types';
 import {
   getModelDescription,
   L10nContext,
   checkModelFileIntegrity,
   getLocalizedModelCapabilities,
-} from '../../../utils';
+} from '../../utils';
 
-import {createStyles} from './styles';
+import {createStyles} from '../ModelsScreen/ModelCard/styles';
 
 type ChatScreenNavigationProp = DrawerNavigationProp<RootDrawerParamList>;
 
@@ -44,7 +44,7 @@ interface ModelCardProps {
   onOpenSettings?: () => void;
 }
 
-export const ModelCard: React.FC<ModelCardProps> = observer(
+export const DownloadModelScreen: React.FC<ModelCardProps> = observer(
   ({model, activeModelId, onOpenSettings}) => {
     const l10n = React.useContext(L10nContext);
     const theme = useTheme();
@@ -69,58 +69,36 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
     useEffect(() => {
       if (isDownloaded) {
         checkModelFileIntegrity(model, modelStore).then(({errorMessage}) => {
-          setIntegrityError(errorMessage);
+          if (!errorMessage) {
+            // Automatically handle the downloaded model
+            handleAutoLoadModel();
+          } else {
+            setIntegrityError(errorMessage);
+          }
         });
       } else {
         setIntegrityError(null);
       }
     }, [isDownloaded, model]);
 
+    const handleAutoLoadModel = async () => {
+      try {
+        await modelStore.setDefaultModel(model.id);
+        
+        await modelStore.initContext(model);
+        
+        navigation.navigate('Chat');
+      } catch (error) {
+        console.error('Error auto-loading model:', error);
+        setSnackbarVisible(true);
+      }
+    };
+
     const stopDownload = useCallback(() => {
       modelStore.cancelDownload(model.id);
     }, [model.id]);
 
-    const handleDelete = useCallback(() => {
-      if (model.isDownloaded) {
-        Alert.alert(
-          l10n.models.modelCard.alerts.deleteTitle,
-          l10n.models.modelCard.alerts.deleteMessage,
-          [
-            {text: l10n.common.cancel, style: 'cancel'},
-            {
-              text: l10n.common.delete,
-              onPress: async () => {
-                await modelStore.deleteModel(model);
-              },
-            },
-          ],
-        );
-      }
-    }, [model, l10n]);
 
-    const openHuggingFaceUrl = useCallback(() => {
-      if (model.hfUrl) {
-        Linking.openURL(model.hfUrl).catch(err => {
-          console.error('Failed to open URL:', err);
-          setSnackbarVisible(true);
-        });
-      }
-    }, [model.hfUrl]);
-
-    const handleRemove = useCallback(() => {
-      Alert.alert(
-        l10n.models.modelCard.alerts.removeTitle,
-        l10n.models.modelCard.alerts.removeMessage,
-        [
-          {text: l10n.common.cancel, style: 'cancel'},
-          {
-            text: l10n.models.modelCard.buttons.remove,
-            style: 'destructive',
-            onPress: () => modelStore.removeModelFromList(model),
-          },
-        ],
-      );
-    }, [model, l10n]);
 
     const handleWarningPress = () => {
       setSnackbarVisible(true);
@@ -151,84 +129,27 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
       </View>
     );
 
-    const renderModelLoadButton = () => {
-      if (
-        modelStore.isContextLoading &&
-        modelStore.loadingModel?.id === model.id
-      ) {
-        return (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator
-              testID="loading-indicator"
-              animating={true}
-              color={theme.colors.primary}
-            />
-          </View>
-        );
-      }
-
-      const handlePress = async () => {
-        if (isActiveModel) {
-          modelStore.manualReleaseContext();
-        } else {
-          try {
-            await modelStore.initContext(model);
-            if (uiStore.autoNavigatetoChat) {
-              navigation.navigate('Chat');
-            }
-          } catch (e) {
-            console.log(`Error: ${e}`);
-          }
-        }
-      };
-
-      return (
-        <TouchableOpacity
-          style={isActiveModel ? styles.deleteButton : styles.loadButton}
-          onPress={handlePress}>
-          <Text style={styles.buttonText}>
-            {isActiveModel
-              ? l10n.models.modelCard.buttons.offload
-              : l10n.models.modelCard.buttons.load}
-          </Text>
-        </TouchableOpacity>
-      );
-    };
-
-    const handleSetDefaultModel = async selectedModel => {
-      try {
-        await modelStore.setDefaultModel(selectedModel.id);
-        console.log('Updated models:', modelStore.availableModels);
-        if (uiStore.autoNavigatetoChat) {
-          navigation.navigate('Chat');
-        }
-      } catch (error) {
-        console.log('Failed to set default model:', error);
-      }
-    };
-
     return (
-      <>
-        <View style={styles.card}>
-          {isActiveModel && (
-            <Text style={styles.activeLabel}>Active Model</Text>
-          )}
-
-          <Text style={styles.modelName}>{model.name}</Text>
+      <ScrollView
+        style={ModelStyles.scrollContainer}
+        showsVerticalScrollIndicator={false}>
+        <View style={ModelStyles.modelCard}>
+          <Text style={ModelStyles.modelLabel}>{model.name}</Text>
 
           {isDownloaded ? (
-            <View style={styles.buttonRow}>
-              {renderModelLoadButton()}
-
-              <TouchableOpacity
-                style={styles.deleteButton}
-                onPress={handleDelete}>
-                <Text style={styles.buttonText}>{l10n.common.delete}</Text>
-              </TouchableOpacity>
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator
+                testID="loading-indicator"
+                animating={true}
+                color={theme.colors.primary}
+              />
+              <Text style={ModelStyles.loadingText}>
+                Loading model...
+              </Text>
             </View>
           ) : isDownloading ? (
             <View style={styles.downloadingContainer}>
-              <Text style={styles.downloadingText}>
+              <Text style={ModelStyles.downloadingText}>
                 Downloading{' '}
                 <Text style={styles.progressPercent}>
                   {Math.round(model.progress)}%
@@ -236,43 +157,20 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
               </Text>
 
               <TouchableOpacity
-                style={styles.stopButton}
+                style={ModelStyles.stopButton}
                 onPress={stopDownload}>
-                <Text style={styles.stopButtonText}>Stop Download</Text>
+                <Text style={ModelStyles.stopButtonText}>Stop Download</Text>
               </TouchableOpacity>
 
-              <Text style={styles.fileSize}>
-                {getModelDescription(model, isActiveModel, modelStore, l10n)}
+              <Text style={ModelStyles.fileSize}>
+                File {getModelDescription(model, isActiveModel, modelStore, l10n)}
               </Text>
             </View>
           ) : (
             renderDownloadOverlay()
           )}
 
-          {!isDownloaded && !isDownloading && (
-            <Text style={styles.statusText}>Not Downloaded</Text>
-          )}
-
-          {isDownloaded && (
-            <TouchableOpacity
-              style={styles.defaultRow}
-              onPress={() => handleSetDefaultModel(model)}>
-              <View
-                style={[
-                  styles.radioCircle,
-                  model.isDefault && styles.radioCircleSelected,
-                ]}>
-                {model.isDefault && <View style={styles.radioDot} />}
-              </View>
-              <Text style={styles.defaultText}>Set as Default Model</Text>
-            </TouchableOpacity>
-          )}
-
-          {isDownloaded && (
-            <Text style={styles.sizeText}>
-              {getModelDescription(model, isActiveModel, modelStore, l10n)}
-            </Text>
-          )}
+        
 
           {/* Display warning icon if there's a memory warning */}
           {shortMemoryWarning && isDownloaded && (
@@ -324,7 +222,102 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
           }}>
           {memoryWarning}
         </Snackbar>
-      </>
+      </ScrollView>
     );
   },
 );
+
+const ModelStyles = StyleSheet.create({
+  container: {
+    backgroundColor: 'rgba(0, 0, 0, 0.6)', // modal overlay background
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+  },
+  modal: {
+    backgroundColor: '#2D3E50',
+    borderRadius: 10,
+    width: '90%',
+    maxHeight: '60%',
+    padding: 20,
+  },
+  scrollContainer: {
+    maxHeight: 300,
+  },
+  title: {
+    fontSize: 15,
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 1,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  prompt: {
+    fontSize: 18,
+    color: '#fff',
+    textAlign: 'center',
+    marginBottom: 20,
+    fontWeight: '900',
+  },
+  modelCard: {
+    backgroundColor: '#1B2A3C',
+    padding: 15,
+    borderRadius: 12,
+    marginBottom: 15,
+    alignItems: 'center',
+    paddingBottom: 20,
+  },
+  modelLabel: {
+    color: '#babdc2',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  fileSize: {
+    color: '#aaa',
+    fontSize: 12,
+    marginTop: 10,
+  },
+  downloadButton: {
+    backgroundColor: '#2662ea',
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    borderRadius: 50,
+    height: 50,
+    width: 130,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  downloadText: {
+    color: '#eafeff',
+    fontWeight: 'bold',
+  },
+  stopButton: {
+    backgroundColor: '#fff',
+    paddingVertical: 8,
+    paddingHorizontal: 25,
+    borderRadius: 25,
+    marginVertical: 15,
+  },
+  stopButtonText: {
+    color: '#000',
+    fontWeight: 'bold',
+  },
+  downloadingText: {
+    color: '#fff',
+    fontSize: 14,
+    marginVertical: 12,
+    fontWeight: 'bold',
+  },
+  loadingText: {
+    marginTop: 8,
+    fontSize: 16,
+  },
+});
