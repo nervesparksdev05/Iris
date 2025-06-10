@@ -45,8 +45,10 @@ export const StopButton = ({
       style={styles.stopButton}>
       <StopIcon
         stroke={color ?? theme.colors.background}
-        width={24}
-        height={24}
+        style={{
+            width: 30,
+            height: 30,
+          }}
       />
     </TouchableOpacity>
   );
@@ -54,6 +56,7 @@ export const StopButton = ({
 
 const styles = StyleSheet.create({
   stopButton: {
-    marginLeft: 16,
+    marginLeft: 30,
+    marginRight: -20
   },
 });

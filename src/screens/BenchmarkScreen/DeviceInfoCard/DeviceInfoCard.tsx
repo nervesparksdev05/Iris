@@ -13,6 +13,7 @@ import {L10nContext} from '../../../utils';
 import {createStyles} from './styles';
 
 import {DeviceInfo} from '../../../utils/types';
+import {modelStore} from '../../../store';
 
 const {DeviceInfoModule} = NativeModules;
 
@@ -164,155 +165,71 @@ export const DeviceInfoCard = ({onDeviceInfo, testId}: Props) => {
       testID={testId ?? 'device-info-card'}
       elevation={0}
       style={styles.deviceInfoCard}>
-      <TouchableOpacity onPress={() => setExpanded(!expanded)}>
+
         <View style={styles.headerRow}>
           <View style={styles.headerContent}>
-            <Text variant="titleSmall">
-              {l10n.benchmark.deviceInfoCard.title}
-            </Text>
-            <Text variant="bodySmall" style={styles.headerSummary}>
-              {l10n.benchmark.deviceInfoCard.deviceSummary
-                .replace('{{brand}}', deviceInfo.brand)
-                .replace('{{model}}', deviceInfo.model)
-                .replace('{{systemName}}', deviceInfo.systemName)
-                .replace('{{systemVersion}}', deviceInfo.systemVersion)}
-            </Text>
-            <Text variant="bodySmall" style={styles.headerSummary}>
-              {l10n.benchmark.deviceInfoCard.coreSummary
-                .replace('{{cores}}', deviceInfo.cpuDetails.cores.toString())
-                .replace('{{memory}}', formatBytes(deviceInfo.totalMemory))}
-            </Text>
+            <View style={styles.deviceInfoRow}>
+              <Text variant="labelSmall" style={styles.deviceInfoLabel}>
+                Device:
+              </Text>
+              <Text variant="bodySmall" style={styles.deviceInfoValue}>
+                {l10n.benchmark.deviceInfoCard.deviceSummary
+                  .replace('{{brand}}', deviceInfo.brand)
+                  .replace('{{model}}', deviceInfo.model)}
+              </Text>
+            </View>
+
+            <View style={styles.deviceInfoRow}>
+              <Text variant="labelSmall" style={styles.deviceInfoLabel}>
+                Android:
+              </Text>
+
+              <Text variant="bodySmall" style={styles.deviceInfoValue}>
+                {l10n.benchmark.deviceInfoCard.systemSummary
+                  .replace('{{systemName}}', deviceInfo.systemName)
+                  .replace('{{systemVersion}}', deviceInfo.systemVersion)}
+              </Text>
+            </View>
+
+            <View style={styles.deviceInfoRow}>
+              <Text variant="labelSmall" style={styles.deviceInfoLabel}>
+                Processor:
+              </Text>
+              <Text variant="bodySmall" style={styles.deviceInfoValue}>
+                {deviceInfo.chipset ||
+                  deviceInfo.cpuDetails.socModel ||
+                  'Unknown'}
+              </Text>
+            </View>
+
+            <View style={styles.deviceInfoRow}>
+              <Text variant="labelSmall" style={styles.deviceInfoLabel}>
+                Available Threads:
+              </Text>
+              <Text variant="bodySmall" style={styles.deviceInfoValue}>
+                {deviceInfo.cpuDetails.cores}
+              </Text>
+            </View>
+
+            <View style={styles.deviceInfoRow}>
+              <Text variant="labelSmall" style={styles.deviceInfoLabel}>
+                Current Model:
+              </Text>
+              <Text variant="bodySmall" style={styles.deviceInfoValue}>
+                {modelStore.activeModel?.name ?? 'Unknown'}
+              </Text>
+            </View>
+
+            <View style={styles.deviceInfoRow}>
+              <Text variant="labelSmall" style={styles.deviceInfoLabel}>
+                User Threads:
+              </Text>
+              <Text variant="bodySmall" style={styles.deviceInfoValue}>
+                0.0
+              </Text>
+            </View>
           </View>
-          <Icon
-            source={expanded ? 'chevron-up' : 'chevron-down'}
-            size={24}
-            color={theme.colors.onSurface}
-          />
         </View>
-      </TouchableOpacity>
-
-      {expanded && (
-        <>
-          <Divider />
-          <Card.Content>
-            <View style={styles.section}>
-              <Text variant="labelSmall" style={styles.sectionTitle}>
-                {l10n.benchmark.deviceInfoCard.sections.basicInfo}
-              </Text>
-              <View style={styles.deviceInfoRow}>
-                <Text variant="labelSmall" style={styles.deviceInfoLabel}>
-                  {l10n.benchmark.deviceInfoCard.fields.architecture}
-                </Text>
-                <Text variant="bodySmall" style={styles.deviceInfoValue}>
-                  {Array.isArray(deviceInfo.cpuArch)
-                    ? deviceInfo.cpuArch.join(', ')
-                    : deviceInfo.cpuArch}
-                </Text>
-              </View>
-              <View style={styles.deviceInfoRow}>
-                <Text variant="labelSmall" style={styles.deviceInfoLabel}>
-                  {l10n.benchmark.deviceInfoCard.fields.totalMemory}
-                </Text>
-                <Text variant="bodySmall" style={styles.deviceInfoValue}>
-                  {formatBytes(deviceInfo.totalMemory)}
-                </Text>
-              </View>
-              <View style={styles.deviceInfoRow}>
-                <Text variant="labelSmall" style={styles.deviceInfoLabel}>
-                  {l10n.benchmark.deviceInfoCard.fields.deviceId}
-                </Text>
-                <Text variant="bodySmall" style={styles.deviceInfoValue}>
-                  {Platform.OS === 'ios'
-                    ? deviceInfo.deviceId
-                    : `${deviceInfo.device} (${deviceInfo.deviceId})`}
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.section}>
-              <Text variant="labelSmall" style={styles.sectionTitle}>
-                {l10n.benchmark.deviceInfoCard.sections.cpuDetails}
-              </Text>
-              <View style={styles.deviceInfoRow}>
-                <Text variant="labelSmall" style={styles.deviceInfoLabel}>
-                  {l10n.benchmark.deviceInfoCard.fields.cpuCores}
-                </Text>
-                <Text variant="bodySmall" style={styles.deviceInfoValue}>
-                  {deviceInfo.cpuDetails.cores}
-                </Text>
-              </View>
-              {deviceInfo.cpuDetails.processors[0]?.['model name'] && (
-                <View style={styles.deviceInfoRow}>
-                  <Text variant="labelSmall" style={styles.deviceInfoLabel}>
-                    {l10n.benchmark.deviceInfoCard.fields.cpuModel}
-                  </Text>
-                  <Text variant="bodySmall" style={styles.deviceInfoValue}>
-                    {deviceInfo.cpuDetails.processors[0]['model name']}
-                  </Text>
-                </View>
-              )}
-              {Platform.OS === 'android' && deviceInfo.chipset && (
-                <View style={styles.deviceInfoRow}>
-                  <Text variant="labelSmall" style={styles.deviceInfoLabel}>
-                    {l10n.benchmark.deviceInfoCard.fields.chipset}
-                  </Text>
-                  <Text variant="bodySmall" style={styles.deviceInfoValue}>
-                    {deviceInfo.chipset}
-                  </Text>
-                </View>
-              )}
-              {Platform.OS === 'android' && (
-                <View style={styles.deviceInfoRow}>
-                  <Text variant="labelSmall" style={styles.deviceInfoLabel}>
-                    {l10n.benchmark.deviceInfoCard.fields.instructions}
-                  </Text>
-                  <Text variant="bodySmall" style={styles.deviceInfoValue}>
-                    {l10n.benchmark.deviceInfoCard.instructions.format
-                      .replace(
-                        '{{fp16}}',
-                        deviceInfo.cpuDetails.hasFp16
-                          ? l10n.benchmark.deviceInfoCard.instructions.yes
-                          : l10n.benchmark.deviceInfoCard.instructions.no,
-                      )
-                      .replace(
-                        '{{dotProd}}',
-                        deviceInfo.cpuDetails.hasDotProd
-                          ? l10n.benchmark.deviceInfoCard.instructions.yes
-                          : l10n.benchmark.deviceInfoCard.instructions.no,
-                      )
-                      .replace(
-                        '{{sve}}',
-                        deviceInfo.cpuDetails.hasSve
-                          ? l10n.benchmark.deviceInfoCard.instructions.yes
-                          : l10n.benchmark.deviceInfoCard.instructions.no,
-                      )
-                      .replace(
-                        '{{i8mm}}',
-                        deviceInfo.cpuDetails.hasI8mm
-                          ? l10n.benchmark.deviceInfoCard.instructions.yes
-                          : l10n.benchmark.deviceInfoCard.instructions.no,
-                      )}
-                  </Text>
-                </View>
-              )}
-            </View>
-
-            <View style={styles.section}>
-              <Text variant="labelSmall" style={styles.sectionTitle}>
-                {l10n.benchmark.deviceInfoCard.sections.appInfo}
-              </Text>
-              <View style={styles.deviceInfoRow}>
-                <Text variant="labelSmall" style={styles.deviceInfoLabel}>
-                  {l10n.benchmark.deviceInfoCard.fields.version}
-                </Text>
-                <Text variant="bodySmall" style={styles.deviceInfoValue}>
-                  {deviceInfo.version} ({deviceInfo.buildNumber})
-                </Text>
-              </View>
-            </View>
-          </Card.Content>
-        </>
-      )}
     </Card>
   );
 };

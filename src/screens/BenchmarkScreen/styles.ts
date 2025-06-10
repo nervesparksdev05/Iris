@@ -14,6 +14,31 @@ export const createStyles = (theme: Theme) =>
     card: {
       marginBottom: 16,
     },
+    HeadingText: {
+      textAlign: 'center',
+      fontSize: 20,
+      marginBottom: 20
+    },
+    header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1a1a35',
+    marginTop: 30,
+  },
+  headerTitle: {
+    fontSize: 18,
+    color: 'white',
+    fontWeight: '600',
+    width: '85%',
+  },
+  headerIcon: {
+    width: 20,
+    height: 20,
+  },
     description: {
       flex: 1,
       color: theme.colors.onSurfaceVariant,
@@ -26,8 +51,21 @@ export const createStyles = (theme: Theme) =>
       textAlign: 'center',
     },
     button: {
-      marginVertical: 6,
+      marginTop: 24,
+    backgroundColor: '#007bff',
+    alignSelf: 'center',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     },
+    buttonLabel: {
+  color: 'white',
+  fontSize: 14,
+  fontWeight: 'bold',
+},
+gradientBackground: {
+  flex: 1
+},
     loadingContainer: {
       alignItems: 'center',
       marginVertical: 8,
@@ -171,4 +209,11 @@ export const createStyles = (theme: Theme) =>
       color: theme.colors.onSurfaceVariant,
       fontStyle: 'italic',
     },
+    simpleResultText: {
+    marginTop: 20,
+    textAlign: 'center',
+    color: '#00FF00', // Bright green
+    fontSize: 16,
+    fontWeight: '600',
+  },
   });

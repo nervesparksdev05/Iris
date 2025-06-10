@@ -31,7 +31,7 @@ export const ModelHeader = ({navigation}) => {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: '#061529',
+    backgroundColor: '#060A15',
   },
   header: {
     height: 56,
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#061529',
+    backgroundColor: '#060A15',
   },
   headerTitle: {
     color: '#fff',

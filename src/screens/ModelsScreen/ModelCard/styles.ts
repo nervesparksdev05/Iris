@@ -1,63 +1,64 @@
-import {StyleSheet} from 'react-native';
-
+import {StyleSheet, Dimensions} from 'react-native';
 import {Theme} from '../../../utils/types';
+
+const {width, height} = Dimensions.get('window');
 
 export const createStyles = (theme: Theme) =>
   StyleSheet.create({
     card: {
       backgroundColor: '#0f223b',
-      borderRadius: 12,
-      padding: 16,
-      marginBottom: 16,
+      borderRadius: width * 0.03,
+      padding: width * 0.04,
+      marginBottom: height * 0.02,
     },
     activeLabel: {
       color: '#18c522',
-      fontSize: 12,
-      marginBottom: 6,
+      fontSize: width * 0.03,
+      marginBottom: height * 0.009,
     },
     modelName: {
       color: '#fff',
-      fontSize: 16,
+      fontSize: width * 0.04,
       fontWeight: '600',
-      marginBottom: 10,
+      marginBottom: height * 0.015,
     },
     buttonRow: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      marginBottom: 8,
+      marginBottom: height * 0.01,
     },
     loadButton: {
       backgroundColor: '#3465ff',
-      paddingVertical: 6,
-      paddingHorizontal: 20,
-      borderRadius: 30,
-      height: 40,
-      width: 80,
+      paddingVertical: height * 0.007,
+      paddingHorizontal: width * 0.05,
+      borderRadius: width * 0.08,
+      height: height * 0.055,
+      width: width * 0.22,
       justifyContent: 'center',
       alignItems: 'center',
     },
     deleteButton: {
       backgroundColor: '#d9534f',
-      paddingVertical: 6,
-      paddingHorizontal: 20,
-      borderRadius: 30,
-      height: 40,
-      width: 100,
+      paddingVertical: height * 0.007,
+      paddingHorizontal: width * 0.05,
+      borderRadius: width * 0.08,
+      height: height * 0.055,
+      width: width * 0.28,
       justifyContent: 'center',
       alignItems: 'center',
     },
     downloadButton: {
       backgroundColor: '#2662ea',
-      paddingVertical: 8,
-      paddingHorizontal: 20,
+      paddingVertical: height * 0.01,
+      paddingHorizontal: width * 0.05,
       borderRadius: 200,
-      height: 40,
-      width: 115,
+      height: height * 0.055,
+      width: width * 0.32,
       justifyContent: 'center',
       alignItems: 'center',
-      marginTop: 8,
-      marginLeft: 5,
-      marginBottom: 25,
+      marginTop: height * 0.01,
+      marginLeft: width * 0.015,
+      marginBottom: height * 0.03,
     },
     buttonText: {
       color: '#fff',
@@ -65,32 +66,30 @@ export const createStyles = (theme: Theme) =>
     },
     statusText: {
       color: '#aaa',
-      fontSize: 12,
-      marginTop: 4,
+      fontSize: width * 0.03,
+      marginTop: height * 0.005,
     },
     defaultRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginTop: 15,
-      marginLeft: 30,
-      marginBottom: 15,
+      marginTop: height * 0.018,
+      marginLeft: width * 0.08,
+      marginBottom: height * 0.018,
     },
-
     defaultText: {
       color: '#aaa',
-      fontSize: 13,
-      marginLeft: 20,
+      fontSize: width * 0.033,
+      marginLeft: width * 0.05,
     },
     sizeText: {
       color: '#999',
-      fontSize: 12,
-      marginTop: 6,
+      fontSize: width * 0.03,
+      marginTop: height * 0.007,
     },
     warningContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      margin: 0,
-      marginTop: 8,
+      marginTop: height * 0.01,
     },
     warningContent: {
       flex: 1,
@@ -98,12 +97,11 @@ export const createStyles = (theme: Theme) =>
       alignItems: 'center',
     },
     warningIcon: {
-      marginLeft: 0,
-      marginRight: 2,
+      marginRight: width * 0.01,
     },
     warningText: {
       color: theme.colors.error,
-      fontSize: 12,
+      fontSize: width * 0.03,
       flex: 1,
       flexWrap: 'wrap',
     },
@@ -114,37 +112,36 @@ export const createStyles = (theme: Theme) =>
     },
     storageErrorText: {
       fontWeight: 'bold',
-      marginHorizontal: 8,
+      marginHorizontal: width * 0.02,
       color: theme.colors.error,
     },
     loadingContainer: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: 10,
-      width: 100,
+      padding: width * 0.025,
+      width: width * 0.25,
     },
     progressBar: {
-      height: 8,
+      height: height * 0.01,
       borderRadius: 5,
-      marginTop: 8,
+      marginTop: height * 0.01,
       backgroundColor: '#061529',
     },
     downloadSpeed: {
       textAlign: 'right',
-      fontSize: 12,
-      marginTop: 5,
+      fontSize: width * 0.03,
+      marginTop: height * 0.006,
       color: '#aaa',
     },
-
     downloadingContainer: {
-      marginTop: 10,
-      marginBottom: 15,
+      marginTop: height * 0.012,
+      marginBottom: height * 0.02,
     },
     downloadingText: {
       color: '#fff',
-      fontSize: 14,
-      marginVertical: 12,
+      fontSize: width * 0.035,
+      marginVertical: height * 0.015,
       fontWeight: 'bold',
     },
     progressPercent: {
@@ -152,12 +149,12 @@ export const createStyles = (theme: Theme) =>
     },
     stopButton: {
       backgroundColor: '#fff',
-      paddingVertical: 8,
-      paddingHorizontal: 25,
-      borderRadius: 25,
-      marginVertical: 15,
-      width: 160,
-      height: 45,
+      paddingVertical: height * 0.01,
+      paddingHorizontal: width * 0.07,
+      borderRadius: width * 0.06,
+      marginVertical: height * 0.02,
+      width: width * 0.45,
+      height: height * 0.06,
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
@@ -168,27 +165,25 @@ export const createStyles = (theme: Theme) =>
     },
     fileSize: {
       color: '#aaa',
-      fontSize: 12,
+      fontSize: width * 0.03,
     },
     radioCircle: {
-      height: 20,
-      width: 20,
-      borderRadius: 10,
+      height: width * 0.05,
+      width: width * 0.05,
+      borderRadius: width * 0.025,
       borderWidth: 2,
-      borderColor: '#888', // Default grey
+      borderColor: '#888',
       alignItems: 'center',
       justifyContent: 'center',
-      marginRight: 8,
+      marginRight: width * 0.02,
     },
-
     radioCircleSelected: {
-      borderColor: '#FFD700', // Yellow border when selected
+      borderColor: '#FFD700',
     },
-
     radioDot: {
-      height: 10,
-      width: 10,
-      borderRadius: 5,
-      backgroundColor: '#FFD700', // Yellow inner dot
+      height: width * 0.025,
+      width: width * 0.025,
+      borderRadius: width * 0.0125,
+      backgroundColor: '#FFD700',
     },
   });

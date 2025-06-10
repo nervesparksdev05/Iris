@@ -266,13 +266,16 @@ export const ChatInput = observer(
                   value={value}
                 />
               </View>
-              {isSendButtonVisible ? (
-                <SendButton
-                  key={inputTextColor}
-                  color={inputTextColor}
-                  onPress={handleSend}
-                />
-              ) : null}
+              {
+                !isStopVisible && (
+                  <SendButton
+                    key={inputTextColor}
+                    color={inputTextColor}
+                    onPress={handleSend}
+                  />
+
+                )
+              }
               {isStopVisible && (
                 <StopButton
                   key={inputTextColor}

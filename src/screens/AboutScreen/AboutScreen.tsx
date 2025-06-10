@@ -6,9 +6,12 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
+
+const {width, height} = Dimensions.get('window');
 
 export const AboutScreen = () => {
   const navigation = useNavigation();
@@ -19,7 +22,6 @@ export const AboutScreen = () => {
       start={{x: 0.5, y: 0}}
       end={{x: 0.5, y: 1}}>
       <View style={styles.wrapper}>
-        {/* Top Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Image
@@ -32,7 +34,6 @@ export const AboutScreen = () => {
 
         <ScrollView style={styles.wrapper}>
           <View style={styles.container}>
-            {/* Welcome Section */}
             <Text style={styles.title}>Welcome to Iris</Text>
             <Text style={styles.description}>
               Iris is an offline Android chat application powered by the
@@ -44,7 +45,6 @@ export const AboutScreen = () => {
               occasionally generate inaccurate results.
             </Text>
 
-            {/* Features */}
             <Text style={styles.sectionTitle}>Features</Text>
 
             <FeatureItem
@@ -68,7 +68,6 @@ export const AboutScreen = () => {
               description="Built on the foundations of the llama.cpp Android example, enabling developers to contribute and modify."
             />
 
-            {/* FAQ Section */}
             <Text style={styles.sectionTitle}>FAQs</Text>
 
             <FAQItem text="What is llama.cpp?" />
@@ -112,75 +111,78 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
   },
+  gradientBackground: {
+    flex: 1,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingHorizontal: width * 0.05,
+    paddingVertical: height * 0.02,
     borderBottomWidth: 1,
     borderBottomColor: '#1a1a35',
-    marginTop: 30,
+    marginTop: height * 0.04,
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: width * 0.055,
     color: 'white',
     fontWeight: '600',
     width: '85%',
   },
   headerIcon: {
-    width: 20,
-    height: 20,
+    width: width * 0.05,
+    height: width * 0.05,
   },
   container: {
-    padding: 20,
+    padding: width * 0.05,
   },
   title: {
-    fontSize: 22,
+    fontSize: width * 0.070,
     fontWeight: 'bold',
     color: 'white',
-    marginBottom: 10,
+    marginBottom: height * 0.01,
   },
   description: {
     color: '#f9f5f5',
-    fontSize: 15,
-    lineHeight: 24,
-    marginBottom: 16,
+    fontSize: width * 0.040,
+    lineHeight: height * 0.03,
+    marginBottom: height * 0.015,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: width * 0.05,
     color: 'white',
-    marginTop: 20,
-    marginBottom: 10,
+    marginTop: height * 0.025,
+    marginBottom: height * 0.01,
     fontWeight: '600',
   },
   featureItem: {
     flexDirection: 'row',
-    marginBottom: 15,
+    marginBottom: height * 0.015,
     alignItems: 'flex-start',
   },
   featureIcon: {
-    width: 24,
-    height: 24,
-    marginRight: 12,
+    width: width * 0.06,
+    height: width * 0.06,
+    marginRight: width * 0.03,
     marginTop: 3,
   },
   featureTitle: {
     color: 'white',
     fontWeight: '600',
-    fontSize: 15,
-    marginBottom: 4,
+    fontSize: width * 0.045,
+    marginBottom: height * 0.005,
   },
   featureDescription: {
     color: '#aaa',
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: width * 0.037,
+    lineHeight: height * 0.025,
   },
   faqItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: height * 0.015,
     borderBottomColor: '#333',
     borderBottomWidth: 1,
   },
@@ -189,21 +191,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   starIcon: {
-    width: 18,
-    height: 18,
-    marginRight: 10,
+    width: width * 0.045,
+    height: width * 0.045,
+    marginRight: width * 0.025,
     tintColor: 'white',
   },
   faqText: {
     color: 'white',
-    fontSize: 15,
+    fontSize: width * 0.045,
   },
   arrowIcon: {
-    width: 18,
-    height: 18,
+    width: width * 0.045,
+    height: width * 0.045,
     tintColor: 'white',
-  },
-  gradientBackground: {
-    flex: 1,
   },
 });

@@ -1,7 +1,8 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet, Dimensions, Platform } from 'react-native';
+import { Theme } from '../../utils/types';
+import { fontStyles } from '../../utils/theme';
 
-import {Theme} from '../../utils/types';
-import {fontStyles} from '../../utils/theme';
+const { width, height } = Dimensions.get('window');
 
 export const createStyles = ({
   theme,
@@ -13,11 +14,12 @@ export const createStyles = ({
   StyleSheet.create({
     container: {
       alignItems: 'center',
+      flex: 1,
       flexDirection: 'row',
     },
     palBtn: {
-      height: 28,
-      width: 28,
+      height: height * 0.035,
+      width: height * 0.035,
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: theme.colors.inverseTextSecondary,
@@ -27,23 +29,23 @@ export const createStyles = ({
       flexDirection: 'row',
       alignItems: 'center',
       flex: 1,
-      paddingHorizontal: 12,
+      paddingHorizontal: width * 0.03,
       borderRadius: 12,
-      minHeight: 54,
+      minHeight: height * 0.07,
     },
     input: {
       ...theme.fonts.inputTextStyle,
       flex: 1,
-      maxHeight: 150,
-      paddingVertical: 0,
-
-      color: '#fff',
-      paddingHorizontal: 12,
-      fontSize: 14,
+      maxHeight: height * 0.2,
+      paddingVertical: Platform.OS === 'ios' ? 10 : 6,
+      paddingHorizontal: width * 0.03,
+      fontSize: width * 0.035,
       backgroundColor: '#21314A',
-      borderRadius: 12,
-      height: 54,
-      marginLeft: 20,
+      borderRadius: 16,
+      height: height * 0.07,
+      marginLeft: width * 0.015,
+      color: '#fff',
+      width: width * 0.7,
     },
     footerContainer: {
       position: 'absolute',
@@ -53,17 +55,18 @@ export const createStyles = ({
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: '#000',
-      paddingHorizontal: 16,
-      paddingVertical: 10,
-      gap: 10,
+      paddingHorizontal: width * 0.04,
+      paddingVertical: height * 0.012,
+      gap: width * 0.025,
     },
     imageIcon: {
-      width: 30,
-      height: 30,
+      width: width * 0.075,
+      height: width * 0.075,
       tintColor: '#aaa',
+      marginLeft: -width * 0.05,
     },
     marginRight: {
-      marginRight: 16,
+      marginRight: width * 0.04,
     },
     inputContainer: {
       flex: 1,
@@ -81,7 +84,7 @@ export const createStyles = ({
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      paddingHorizontal: 12,
+      paddingHorizontal: width * 0.03,
       borderTopLeftRadius: 12,
       borderTopRightRadius: 12,
       borderBottomWidth: 1,
@@ -97,17 +100,17 @@ export const createStyles = ({
       flex: 1,
       flexDirection: 'row',
       alignItems: 'flex-end',
-      paddingHorizontal: 24,
-      paddingVertical: 20,
-      marginTop: isEditMode ? 28 : 0,
+      paddingHorizontal: width * 0.06,
+      paddingVertical: height * 0.025,
+      marginTop: isEditMode ? height * 0.035 : 0,
     },
     palNameWrapper: {
       ...fontStyles.regular,
       color: theme.colors.inverseOnSurface,
-      fontSize: 12,
+      fontSize: width * 0.03,
     },
     palName: {
-      fontSize: 12,
+      fontSize: width * 0.03,
       color: theme.colors.inverseOnSurface,
       ...fontStyles.semibold,
     },

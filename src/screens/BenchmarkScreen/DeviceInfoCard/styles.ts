@@ -1,47 +1,56 @@
-import {StyleSheet} from 'react-native';
-
+import {StyleSheet, Dimensions} from 'react-native';
 import type {Theme} from '../../../utils/types';
+
+const {width} = Dimensions.get('window');
+const scale = (size: number) => (width / 375) * size;
 
 export const createStyles = (theme: Theme) =>
   StyleSheet.create({
     deviceInfoCard: {
-      marginBottom: 16,
-      backgroundColor: theme.colors.surface,
+      marginBottom: scale(16),
+      backgroundColor: 'white',
       borderWidth: 1,
       borderColor: theme.colors.outline,
-      borderRadius: 15,
+      borderRadius: scale(15),
     },
     deviceInfoRow: {
       flexDirection: 'row',
-      justifyContent: 'space-between',
+      justifyContent: 'flex-start',
       alignItems: 'center',
-      marginBottom: 4,
+      marginBottom: scale(6),
     },
     deviceInfoLabel: {
-      color: theme.colors.onSurfaceVariant,
+      color: '#000',
+      fontSize: scale(14),
+      fontWeight: '500',
     },
     deviceInfoValue: {
-      color: theme.colors.onSurface,
+      color: '#000',
+      fontSize: scale(14),
+      fontWeight: '400',
     },
     headerRow: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      padding: 16,
+      padding: scale(16),
     },
     headerContent: {
       flex: 1,
     },
     headerSummary: {
-      color: theme.colors.onSurfaceVariant,
-      marginTop: 4,
+      color: '#000',
+      fontSize: scale(13),
+      marginTop: scale(4),
     },
     section: {
-      marginVertical: 8,
+      marginVertical: scale(8),
     },
     sectionTitle: {
       color: theme.colors.primary,
-      marginBottom: 8,
+      fontSize: scale(14),
+      marginBottom: scale(8),
       textTransform: 'uppercase',
+      fontWeight: '600',
     },
   });

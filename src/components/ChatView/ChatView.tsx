@@ -782,22 +782,6 @@ export const ChatView = observer(
                 </View>
               ))}
             </View>
-
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.suggestionContainer}>
-              <TouchableOpacity style={styles.suggestionBox}>
-                <Text style={styles.suggestionText}>
-                  Explain how to develop a consistent reading habit.
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.suggestionBox}>
-                <Text style={styles.suggestionText}>
-                  Write an email to your teacher requesting leave for...
-                </Text>
-              </TouchableOpacity>
-            </ScrollView>
           </ScrollView>
         </>
       ),
@@ -839,6 +823,110 @@ export const ChatView = observer(
                 {chatMessages.length > 0
                   ? renderChatList()
                   : renderHomeBackground()}
+
+                {chatMessages.length === 0 && (
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={styles.suggestionContainer}>
+                    <TouchableOpacity
+                      style={styles.suggestionBox}
+                      onPress={() =>
+                        setInputText(
+                          'Explain how to develop a consistent reading habit.',
+                        )
+                      }>
+                      <Text style={styles.suggestionText}>
+                        Explain how to develop a consistent reading habit.
+                      </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={styles.suggestionBox}
+                      onPress={() =>
+                        setInputText(
+                          'Write an email to your manager requesting leave for a day.',
+                        )
+                      }>
+                      <Text style={styles.suggestionText}>
+                        Write an email to your manager requesting leave for a
+                        day.
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.suggestionBox}
+                      onPress={() =>
+                        setInputText(
+                          'Suggest time management strategies for handeling multiple deadlines effectively.',
+                        )
+                      }>
+                      <Text style={styles.suggestionText}>
+                        Suggest time management strategies for handeling
+                        multiple deadlines effectively.
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.suggestionBox}
+                      onPress={() =>
+                        setInputText(
+                          'Draft a proffesional LinkedIn message to connect with a recruiter.',
+                        )
+                      }>
+                      <Text style={styles.suggestionText}>
+                        Draft a proffesional LinkedIn message to connect with a
+                        recruiter.
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.suggestionBox}
+                      onPress={() =>
+                        setInputText(
+                          'Suggest ways to practice mindfulness in a busy daily schedule.',
+                        )
+                      }>
+                      <Text style={styles.suggestionText}>
+                        Suggest ways to practice mindfulness in a busy daily
+                        schedule.
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.suggestionBox}
+                      onPress={() =>
+                        setInputText(
+                          'Recommend a 15-minute daily workout routine to stay fit with busy schedule.',
+                        )
+                      }>
+                      <Text style={styles.suggestionText}>
+                        Recommend a 15-minute daily workout routine to stay fit
+                        with busy schedule.
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.suggestionBox}
+                      onPress={() =>
+                        setInputText(
+                          'Provide a simple and polite spanish translation of `Excuse me, can you help me?` with explation',
+                        )
+                      }>
+                      <Text style={styles.suggestionText}>
+                        Provide a simple and polite spanish translation of
+                        'Excuse me, can you help me?' with explation.
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.suggestionBox}
+                      onPress={() =>
+                        setInputText(
+                          'Recommend 3 books that can improve communication skills.',
+                        )
+                      }>
+                      <Text style={styles.suggestionText}>
+                        Recommend 3 books that can improve communication skills.
+                      </Text>
+                    </TouchableOpacity>
+                  </ScrollView>
+                )}
+
                 <Animated.View
                   onLayout={onLayoutChatInput}
                   style={[
@@ -874,6 +962,7 @@ export const ChatView = observer(
                     }}
                   />
                 </Animated.View>
+
                 <ChatPalModelPickerSheet
                   isVisible={isPickerVisible}
                   onClose={() => setIsPickerVisible(false)}

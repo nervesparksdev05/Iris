@@ -799,7 +799,8 @@ export const l10n = {
       },
       deviceInfoCard: {
         title: 'Device Information',
-        deviceSummary: '{{brand}} {{model}} • {{systemName}} {{systemVersion}}',
+        deviceSummary: '{{brand}} {{model}}',
+        systemSummary: '{{systemName}} {{systemVersion}}',
         coreSummary: '{{cores}} cores • {{memory}}',
         sections: {
           basicInfo: 'Basic Info',
@@ -1655,7 +1656,8 @@ export const l10n = {
       },
       deviceInfoCard: {
         title: 'デバイス情報',
-        deviceSummary: '{{brand}} {{model}} • {{systemName}} {{systemVersion}}',
+        deviceSummary: '{{brand}} {{model}}',
+        systemSummary: '{{systemName}} {{systemVersion}}',
         coreSummary: '{{cores}}コア • {{memory}}',
         sections: {
           basicInfo: '基本情報',
@@ -2460,7 +2462,8 @@ export const l10n = {
       },
       deviceInfoCard: {
         title: '设备信息',
-        deviceSummary: '{{brand}} {{model}} • {{systemName}} {{systemVersion}}',
+        deviceSummary: '{{brand}} {{model}} ',
+        systemSummary: '{{systemName}} {{systemVersion}}',
         coreSummary: '{{cores}}核心 • {{memory}}',
         sections: {
           basicInfo: '基本信息',

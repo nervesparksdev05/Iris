@@ -168,28 +168,20 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
       }
 
       const handlePress = async () => {
-        if (isActiveModel) {
-          modelStore.manualReleaseContext();
-        } else {
-          try {
-            await modelStore.initContext(model);
-            if (uiStore.autoNavigatetoChat) {
-              navigation.navigate('Chat');
-            }
-          } catch (e) {
-            console.log(`Error: ${e}`);
+        try {
+          await modelStore.initContext(model);
+          if (uiStore.autoNavigatetoChat) {
+            navigation.navigate('Chat');
           }
+        } catch (e) {
+          console.log(`Error: ${e}`);
         }
       };
 
       return (
-        <TouchableOpacity
-          style={isActiveModel ? styles.deleteButton : styles.loadButton}
-          onPress={handlePress}>
+        <TouchableOpacity style={styles.loadButton} onPress={handlePress}>
           <Text style={styles.buttonText}>
-            {isActiveModel
-              ? l10n.models.modelCard.buttons.offload
-              : l10n.models.modelCard.buttons.load}
+            {l10n.models.modelCard.buttons.load}
           </Text>
         </TouchableOpacity>
       );

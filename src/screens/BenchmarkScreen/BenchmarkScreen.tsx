@@ -23,6 +23,9 @@ import {modelStore, benchmarkStore, uiStore} from '../../store';
 
 import type {DeviceInfo, Model} from '../../utils/types';
 import {BenchmarkConfig, BenchmarkResult} from '../../utils/types';
+import LinearGradient from 'react-native-linear-gradient';
+import { TouchableOpacity, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const DEFAULT_CONFIGS: BenchmarkConfig[] = [
   {pp: 512, tg: 128, pl: 1, nr: 3, label: 'Default'},
@@ -88,6 +91,7 @@ export const BenchmarkScreen: React.FC = observer(() => {
   const theme = useTheme();
   const styles = createStyles(theme);
   const l10n = useContext(L10nContext);
+  const navigation = useNavigation();
 
   const handleSliderChange = (name: string, value: number) => {
     setSelectedConfig(prev => ({
@@ -521,138 +525,118 @@ export const BenchmarkScreen: React.FC = observer(() => {
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
-      <ScrollView style={styles.scrollView}>
-        <Card elevation={0} style={styles.card}>
-          <Card.Content>
-            <DeviceInfoCard onDeviceInfo={handleDeviceInfo} />
-            {renderModelSelector()}
-
-            {modelStore.loadingModel ? (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator
-                  testID="loading-indicator-model-init"
-                  size="large"
-                />
-                <Text style={styles.loadingText}>
-                  {l10n.benchmark.messages.initializingModel}
+      <LinearGradient
+        colors={['#060A15', '#051632']}
+        style={styles.gradientBackground}
+        start={{x: 0.5, y: 0}}
+        end={{x: 0.5, y: 1}}>
+          <View style={styles.header}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                      <Image
+                        source={require('../../assets/appIcons/backIcon.png')}
+                        style={styles.headerIcon}
+                      />
+                    </TouchableOpacity>
+                    <Text style={styles.headerTitle}>About</Text>
+                  </View>
+        <ScrollView style={styles.scrollView}>
+          <Card elevation={0} style={styles.card}>
+            <Card.Content>
+              <Text style={styles.HeadingText}>
+                  Benchmark Information
                 </Text>
-              </View>
-            ) : (
+              <DeviceInfoCard onDeviceInfo={handleDeviceInfo} />
+
               <>
-                {!modelStore.context ? (
-                  <Text style={styles.warning}>
-                    {l10n.benchmark.messages.pleaseSelectModel}
-                  </Text>
-                ) : (
-                  <>
-                    <Button
+                {/* <Button
                       testID="advanced-settings-button"
                       mode="text"
                       onPress={() => setShowAdvancedDialog(true)}
                       icon="tune"
                       style={styles.advancedButton}>
                       {l10n.benchmark.buttons.advancedSettings}
-                    </Button>
+                    </Button> */}
 
-                    {!isRunning && renderWarningMessage()}
+                {/* {!isRunning && renderWarningMessage()} */}
 
-                    <Button
-                      testID="start-test-button"
-                      mode="contained"
-                      onPress={runBenchmark}
-                      disabled={isRunning}
-                      style={styles.button}>
-                      {isRunning
-                        ? l10n.benchmark.buttons.runningTest
-                        : l10n.benchmark.buttons.startTest}
-                    </Button>
+                <Button
+                  testID="start-test-button"
+                  mode="contained"
+                  onPress={runBenchmark}
+                  disabled={isRunning}
+                  style={styles.button}
+                  labelStyle={styles.buttonLabel}>
+                  {isRunning
+                    ? l10n.benchmark.buttons.runningTest
+                    : 'Start Benchmark'}
+                </Button>
 
-                    {isRunning && (
-                      <View style={styles.loadingContainer}>
-                        <ActivityIndicator
-                          testID="loading-indicator-benchmark"
-                          size="large"
-                        />
-                        <Text style={styles.warningText}>
-                          {l10n.benchmark.messages.keepScreenOpen}
-                        </Text>
-                      </View>
-                    )}
+                <Text style={styles.simpleResultText}>
+                  Tokens per second:{' '}
+                  {benchmarkStore.results.length > 0
+                    ? benchmarkStore.results[
+                        benchmarkStore.results.length - 1
+                      ].tgAvg.toFixed(2)
+                    : 'N/A'}
+                </Text>
 
-                    {renderAdvancedSettings()}
-                  </>
-                )}
-              </>
-            )}
-
-            {benchmarkStore.results.length > 0 && (
-              <View style={styles.resultsCard}>
-                <View style={styles.resultsHeader}>
-                  <Text variant="titleSmall">
-                    {l10n.benchmark.sections.testResults}
-                  </Text>
-                  <Button
-                    testID="clear-all-button"
-                    mode="text"
-                    onPress={handleDeleteAll}
-                    icon="delete"
-                    compact>
-                    {l10n.benchmark.buttons.clearAll}
-                  </Button>
-                </View>
-                {benchmarkStore.results.map((result, index) => (
-                  <View key={index} style={styles.resultItem}>
-                    <BenchResultCard
-                      result={result}
-                      onDelete={handleDeleteResult}
-                      onShare={handleSharePress}
+                {isRunning && (
+                  <View style={styles.loadingContainer}>
+                    <ActivityIndicator
+                      testID="loading-indicator-benchmark"
+                      size="large"
                     />
+                    <Text style={styles.warningText}>
+                      {l10n.benchmark.messages.keepScreenOpen}
+                    </Text>
                   </View>
-                ))}
-              </View>
-            )}
+                )}
 
-            <Dialog
-              visible={deleteConfirmVisible}
-              onDismiss={() => setDeleteConfirmVisible(false)}
-              title={l10n.benchmark.dialogs.deleteResult.title}
-              actions={[
-                {
-                  label: l10n.benchmark.buttons.cancel,
-                  onPress: () => setDeleteConfirmVisible(false),
-                },
-                {
-                  label: l10n.benchmark.buttons.delete,
-                  onPress: handleConfirmDelete,
-                },
-              ]}>
-              <Text>{l10n.benchmark.dialogs.deleteResult.message}</Text>
-            </Dialog>
+                {renderAdvancedSettings()}
+              </>
 
-            <Dialog
-              testID="clear-all-dialog"
-              visible={deleteAllConfirmVisible}
-              onDismiss={() => setDeleteAllConfirmVisible(false)}
-              title={l10n.benchmark.dialogs.clearAllResults.title}
-              actions={[
-                {
-                  testID: 'clear-all-dialog-cancel-button',
-                  label: l10n.benchmark.buttons.cancel,
-                  onPress: () => setDeleteAllConfirmVisible(false),
-                },
-                {
-                  testID: 'clear-all-dialog-confirm-button',
-                  label: l10n.benchmark.buttons.clearAll,
-                  onPress: handleConfirmDeleteAll,
-                },
-              ]}>
-              <Text>{l10n.benchmark.dialogs.clearAllResults.message}</Text>
-            </Dialog>
+              <Dialog
+                visible={deleteConfirmVisible}
+                onDismiss={() => setDeleteConfirmVisible(false)}
+                title={l10n.benchmark.dialogs.deleteResult.title}
+                actions={[
+                  {
+                    label: l10n.benchmark.buttons.cancel,
+                    onPress: () => setDeleteConfirmVisible(false),
+                  },
+                  {
+                    label: l10n.benchmark.buttons.delete,
+                    onPress: handleConfirmDelete,
+                  },
+                ]}>
+                <Text>{l10n.benchmark.dialogs.deleteResult.message}</Text>
+              </Dialog>
 
-            {renderShareDialog()}
-          </Card.Content>
-        </Card>
-      </ScrollView>
+              <Dialog
+                testID="clear-all-dialog"
+                visible={deleteAllConfirmVisible}
+                onDismiss={() => setDeleteAllConfirmVisible(false)}
+                title={l10n.benchmark.dialogs.clearAllResults.title}
+                actions={[
+                  {
+                    testID: 'clear-all-dialog-cancel-button',
+                    label: l10n.benchmark.buttons.cancel,
+                    onPress: () => setDeleteAllConfirmVisible(false),
+                  },
+                  {
+                    testID: 'clear-all-dialog-confirm-button',
+                    label: l10n.benchmark.buttons.clearAll,
+                    onPress: handleConfirmDeleteAll,
+                  },
+                ]}>
+                <Text>{l10n.benchmark.dialogs.clearAllResults.message}</Text>
+              </Dialog>
+
+              {renderShareDialog()}
+            </Card.Content>
+          </Card>
+        </ScrollView>
+      </LinearGradient>
     </SafeAreaView>
   );
 });

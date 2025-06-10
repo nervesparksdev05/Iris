@@ -4,7 +4,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   TouchableOpacityProps,
-  Image
+  Image,
 } from 'react-native';
 
 import {useTheme} from '../../hooks';
@@ -44,13 +44,13 @@ export const SendButton = ({
       style={styles.sendButton}>
       {theme.icons?.sendButtonIcon?.() ?? (
         <Image
-                    source={require('../../assets/appIcons/sendIcon.png')}
-                    style={{
-                      width: 30,
-    height: 30,
-    tintColor: '#aaa',
-                    }}
-                  />
+          source={require('../../assets/appIcons/sendIcon.png')}
+          style={{
+            width: 30,
+            height: 30,
+            tintColor: '#aaa',
+          }}
+        />
         // <SendIcon
         //   stroke={color ?? theme.colors.inverseOnSurface}
         //   width={24}
@@ -63,6 +63,7 @@ export const SendButton = ({
 
 const styles = StyleSheet.create({
   sendButton: {
-    marginLeft: 16,
+    marginLeft: 30,
+    marginRight: -20
   },
 });

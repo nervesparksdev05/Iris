@@ -153,6 +153,7 @@ const AppContent = observer(() => {
                           component={gestureHandlerRootHOC(() => (
                             <>
                               <ChatScreen />
+                              {/* remaining page */}
                               {showDownloadScreen && (
                                 <View style={StyleSheet.absoluteFillObject}>
                                   <BlurView
@@ -197,8 +198,7 @@ const AppContent = observer(() => {
                           name={ROUTES.BENCHMARK}
                           component={gestureHandlerRootHOC(BenchmarkScreen)}
                           options={{
-                            headerStyle: styles.headerWithoutDivider,
-                            title: currentL10n.screenTitles.benchmark,
+                            headerShown: false
                           }}
                         />
                         <Drawer.Screen
