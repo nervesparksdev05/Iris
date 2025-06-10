@@ -13,6 +13,7 @@ import {
   Text,
   Image,
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
 import dayjs from 'dayjs';
 import {observer} from 'mobx-react';
@@ -655,7 +656,7 @@ export const ChatView = observer(
             ListHeaderComponent={renderListHeaderComponent}
             maxToRenderPerBatch={6}
             onEndReachedThreshold={0.75}
-            style={[styles.flatList, {backgroundColor: '#0D0D1A'}]}
+            style={[styles.flatList]}
             showsVerticalScrollIndicator={false}
             onScroll={handleScroll}
             {...unwrap(flatListProps)}
@@ -823,75 +824,81 @@ export const ChatView = observer(
       : theme.colors.secondaryContainer;
     return (
       <UserContext.Provider value={user}>
-        <View style={styles.container} onLayout={onLayout}>
-          <KeyboardAvoidingView
-            behavior="padding"
-            keyboardVerticalOffset={headerHeight}
-            style={styles.container}>
-            <View style={styles.chatContainer}>
-              <ChatHeader />
-              {chatMessages.length > 0
-                ? renderChatList()
-                : renderHomeBackground()}
-              <Animated.View
-                onLayout={onLayoutChatInput}
-                style={[
-                  styles.inputContainer,
-                  // eslint-disable-next-line react-native/no-inline-styles
-                  {
-                    paddingBottom: insets.bottom,
-                    transform: [{translateY}],
-                    zIndex: 10,
-                  },
-                  {backgroundColor: '#000'},
-                ]}>
-                <ChatInput
-                  {...{
-                    ...unwrap(inputProps),
-                    isAttachmentUploading,
-                    isStreaming,
-                    onAttachmentPress,
-                    onSendPress: wrappedOnSendPress,
-                    onStopPress,
-                    chatInputHeight,
-                    inputBackgroundColor,
-                    onCancelEdit: handleCancelEdit,
-                    onPalBtnPress: () => setIsPickerVisible(!isPickerVisible),
-                    isStopVisible,
-                    isPickerVisible,
-                    sendButtonVisibilityMode,
-                    textInputProps: {
-                      ...textInputProps,
-                      value: inputText,
-                      onChangeText: setInputText,
+        <LinearGradient
+          colors={['#060A15', '#051632']}
+          style={styles.gradientBackground}
+          start={{x: 0.5, y: 0}}
+          end={{x: 0.5, y: 1}}>
+          <View style={styles.container} onLayout={onLayout}>
+            <KeyboardAvoidingView
+              behavior="padding"
+              keyboardVerticalOffset={headerHeight}
+              style={styles.container}>
+              <View style={styles.chatContainer}>
+                <ChatHeader />
+                {chatMessages.length > 0
+                  ? renderChatList()
+                  : renderHomeBackground()}
+                <Animated.View
+                  onLayout={onLayoutChatInput}
+                  style={[
+                    styles.inputContainer,
+                    // eslint-disable-next-line react-native/no-inline-styles
+                    {
+                      paddingBottom: insets.bottom,
+                      transform: [{translateY}],
+                      zIndex: 10,
                     },
-                  }}
+                    {backgroundColor: '#000'},
+                  ]}>
+                  <ChatInput
+                    {...{
+                      ...unwrap(inputProps),
+                      isAttachmentUploading,
+                      isStreaming,
+                      onAttachmentPress,
+                      onSendPress: wrappedOnSendPress,
+                      onStopPress,
+                      chatInputHeight,
+                      inputBackgroundColor,
+                      onCancelEdit: handleCancelEdit,
+                      onPalBtnPress: () => setIsPickerVisible(!isPickerVisible),
+                      isStopVisible,
+                      isPickerVisible,
+                      sendButtonVisibilityMode,
+                      textInputProps: {
+                        ...textInputProps,
+                        value: inputText,
+                        onChangeText: setInputText,
+                      },
+                    }}
+                  />
+                </Animated.View>
+                <ChatPalModelPickerSheet
+                  isVisible={isPickerVisible}
+                  onClose={() => setIsPickerVisible(false)}
+                  onModelSelect={handleModelSelect}
+                  onPalSelect={handlePalSelect}
+                  chatInputHeight={chatInputHeight.height}
+                  keyboardHeight={keyboardHeight}
                 />
-              </Animated.View>
-              <ChatPalModelPickerSheet
-                isVisible={isPickerVisible}
-                onClose={() => setIsPickerVisible(false)}
-                onModelSelect={handleModelSelect}
-                onPalSelect={handlePalSelect}
-                chatInputHeight={chatInputHeight.height}
-                keyboardHeight={keyboardHeight}
-              />
-            </View>
-          </KeyboardAvoidingView>
-          <ImageView
-            imageIndex={imageViewIndex}
-            images={gallery}
-            onRequestClose={handleRequestClose}
-            visible={isImageViewVisible}
-          />
-          <Menu
-            visible={menuVisible}
-            onDismiss={handleMenuDismiss}
-            selectable={false}
-            anchor={menuPosition}>
-            {menuItems.map(renderMenuItem)}
-          </Menu>
-        </View>
+              </View>
+            </KeyboardAvoidingView>
+            <ImageView
+              imageIndex={imageViewIndex}
+              images={gallery}
+              onRequestClose={handleRequestClose}
+              visible={isImageViewVisible}
+            />
+            <Menu
+              visible={menuVisible}
+              onDismiss={handleMenuDismiss}
+              selectable={false}
+              anchor={menuPosition}>
+              {menuItems.map(renderMenuItem)}
+            </Menu>
+          </View>
+        </LinearGradient>
       </UserContext.Provider>
     );
   },

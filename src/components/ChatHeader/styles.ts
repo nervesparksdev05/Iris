@@ -19,7 +19,7 @@ export const createStyles = ({
       alignItems: 'center',
       paddingHorizontal: 16,
       paddingBottom: 10,
-      marginTop: 40
+      marginTop: 40,
     },
     navIcons: {
       flexDirection: 'row',

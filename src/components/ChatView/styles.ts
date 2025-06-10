@@ -1,5 +1,7 @@
 import {StyleSheet} from 'react-native';
 import {Theme} from '../../utils/types';
+import {Dimensions, Platform} from 'react-native';
+const {width, height} = Dimensions.get('window');
 
 export const createStyles = ({theme}: {theme: Theme}) =>
   StyleSheet.create({
@@ -9,7 +11,7 @@ export const createStyles = ({theme}: {theme: Theme}) =>
     },
     flatList: {
       // backgroundColor: theme.colors.background,
-      backgroundColor: '#0D0D1A',
+      // backgroundColor: '#0D0D1A',
       height: '100%',
     },
     flatListContentContainer: {
@@ -61,7 +63,11 @@ export const createStyles = ({theme}: {theme: Theme}) =>
     chatContainer: {
       flex: 1,
       position: 'relative',
-      backgroundColor: theme.colors.background,
+      backgroundColor: 'transparent',
+      // backgroundColor: theme.colors.background,
+    },
+    gradientBackground: {
+      flex: 1,
     },
     customBottomComponent: {
       position: 'absolute',
@@ -69,108 +75,117 @@ export const createStyles = ({theme}: {theme: Theme}) =>
       left: 0,
       right: 0,
     },
-  scrollContent: {
-    paddingBottom: 20,
-  },
-  titleContainer: {
-    alignItems: 'center',
-    marginVertical: 30,
-  },
-  titleText: {
-    fontSize: 40,
-    color: '#fff',
-    textAlign: 'center',
-  },
-  infoSection: {
-    marginBottom: 20,
-  },
-  infoBox: {
-    flexDirection: 'row',
-    backgroundColor: '#010825',
-    padding: 12,
-    borderRadius: 12,
-    marginBottom: 20,
-    alignItems: 'center',
-  },
-  infoText: {
-    color: '#fff',
-    marginLeft: 10,
-    flex: 1,
-    fontSize: 14,
-  },
-  suggestionContainer: {
-    paddingVertical: 10,
-    paddingLeft: 4,
-  },
-  suggestionBox: {
-    backgroundColor: '#020814',
-    borderRadius: 12,
-    padding: 12,
-    marginRight: 12,
-    width: 184,
-    height: 101,
-  },
-  suggestionText: {
-    color: '#898a94',
-    fontSize: 13,
-  },
-  iconMargin: {
-    marginRight: 15,
-    height: 30,
-    width: 30,
-  },
+    scrollContent: {
+      paddingBottom: height * 0.05,
+      paddingHorizontal: width * 0.05,
+    },
+    titleContainer: {
+      alignItems: 'center',
+      marginVertical: height * 0.03,
+    },
+    titleText: {
+      fontSize: Math.min(width * 0.3, 44),
+      color: '#fff',
+      textAlign: 'center',
+    },
+    infoSection: {
+      marginBottom: height * 0.02,
+    },
+    infoBox: {
+      flexDirection: 'row',
+      backgroundColor: '#010825',
+      padding: width * 0.035,
+      borderRadius: 12,
+      marginBottom: height * 0.025,
+      alignItems: 'center',
+    },
+    infoText: {
+      color: '#fff',
+      marginLeft: 10,
+      flex: 1,
+      fontSize: Math.min(width * 0.04, 14),
+    },
+    suggestionContainer: {
+      paddingVertical: height * 0.015,
+      paddingLeft: width * 0.02,
+    },
+    suggestionBox: {
+      backgroundColor: '#020814',
+      borderRadius: 12,
+      padding: width * 0.035,
+      marginRight: width * 0.03,
+      width: width * 0.55,
+      minHeight: height * 0.12,
+    },
+    suggestionText: {
+      color: '#898a94',
+      fontSize: Math.min(width * 0.035, 14),
+    },
+    iconMargin: {
+      marginRight: 15,
+      height: width * 0.08,
+      width: width * 0.08,
+      resizeMode: 'contain',
+    },
 
-  chatList: {
-    paddingTop: 10,
-  },
-  userMsgContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    marginBottom: 16,
-    paddingHorizontal: 8,
-  },
-  userMsg: {
-    backgroundColor: '#1E1E2E',
-    color: '#fff',
-    padding: 10,
-    borderRadius: 10,
-    marginRight: 8,
-    maxWidth: '75%',
-  },
-  userIcon: {
-    width: 30,
-    height: 30,
-  },
-  aiMsgContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-    paddingHorizontal: 8,
-  },
-  aiIcon: {
-    width: 24,
-    height: 24,
-    marginRight: 8,
-  },
-  aiMsg: {
-    backgroundColor: '#161624',
-    color: '#fff',
-    padding: 10,
-    borderRadius: 10,
-    maxWidth: '75%',
-  },
-  loadingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 10,
-    marginBottom: 10,
-    gap: 6,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    backgroundColor: '#fff',
-    borderRadius: 4,
-  },
+    chatList: {
+      paddingTop: 10,
+      paddingHorizontal: 8,
+    },
+    userMsgContainer: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      alignItems: 'flex-start',
+      marginBottom: 16,
+      paddingHorizontal: 8,
+    },
+    userMsg: {
+      backgroundColor: '#1E1E2E',
+      color: '#fff',
+      paddingVertical: 10,
+      paddingHorizontal: 14,
+      borderRadius: 10,
+      marginRight: 8,
+      maxWidth: '75%',
+      marginTop: 8,
+    },
+    userIcon: {
+      width: 24,
+      height: 24,
+      marginBottom: 4,
+    },
+    aiMsgContainer: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      marginBottom: 16,
+      paddingHorizontal: 8,
+    },
+    aiIcon: {
+      width: 24,
+      height: 24,
+      marginRight: 4,
+      marginBottom: 4,
+    },
+    aiMsg: {
+      color: '#fff',
+      paddingVertical: 10,
+      paddingHorizontal: 14,
+      borderRadius: 10,
+      maxWidth: '75%',
+      marginTop: 1,
+    },
+
+    loadingContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginLeft: 10,
+      marginBottom: 10,
+      gap: 6,
+    },
+    dot: {
+      width: 8,
+      height: 8,
+      backgroundColor: '#fff',
+      borderRadius: 4,
+    },
   });
