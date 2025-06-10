@@ -8,74 +8,77 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
 
 export const AboutScreen = () => {
   const navigation = useNavigation();
   return (
-    <View style={styles.wrapper}>
-      {/* Top Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image
-            source={require('../../assets/appIcons/backIcon.png')}
-            style={styles.headerIcon}
-          />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>About</Text>
-        <Image
-          source={require('../../assets/appIcons/questionMarkIcon.png')}
-          style={styles.headerIcon}
-        />
-      </View>
-
-      <ScrollView style={styles.wrapper}>
-        <View style={styles.container}>
-          {/* Welcome Section */}
-          <Text style={styles.title}>Welcome to Iris</Text>
-          <Text style={styles.description}>
-            Iris is an offline Android chat application powered by the llama.cpp
-            framework. Designed to operate entirely offline, it ensures privacy
-            and independence from external servers. Whether you're a developer
-            exploring AI applications or a privacy-conscious user, this app
-            provides a seamless and secure way to experience conversational AI.
-            Please note that the app may occasionally generate inaccurate
-            results.
-          </Text>
-
-          {/* Features */}
-          <Text style={styles.sectionTitle}>Features</Text>
-
-          <FeatureItem
-            icon={require('../../assets/appIcons/correctIcon.png')}
-            title="Offline Functionality"
-            description="Runs without the need for an internet connection."
-          />
-          <FeatureItem
-            icon={require('../../assets/appIcons/correctIcon.png')}
-            title="Privacy First"
-            description="All data is processed locally on your device."
-          />
-          <FeatureItem
-            icon={require('../../assets/appIcons/correctIcon.png')}
-            title="Customizable Models"
-            description="Download and use your preferred AI model with ease."
-          />
-          <FeatureItem
-            icon={require('../../assets/appIcons/correctIcon.png')}
-            title="Open Source"
-            description="Built on the foundations of the llama.cpp Android example, enabling developers to contribute and modify."
-          />
-
-          {/* FAQ Section */}
-          <Text style={styles.sectionTitle}>FAQs</Text>
-
-          <FAQItem text="What is llama.cpp?" />
-          <FAQItem text="How does offline mode work?" />
-          <FAQItem text="Can I use custom AI models?" />
-          <FAQItem text="Is my data secure?" />
+    <LinearGradient
+      colors={['#060A15', '#051632']}
+      style={styles.gradientBackground}
+      start={{x: 0.5, y: 0}}
+      end={{x: 0.5, y: 1}}>
+      <View style={styles.wrapper}>
+        {/* Top Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image
+              source={require('../../assets/appIcons/backIcon.png')}
+              style={styles.headerIcon}
+            />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>About</Text>
         </View>
-      </ScrollView>
-    </View>
+
+        <ScrollView style={styles.wrapper}>
+          <View style={styles.container}>
+            {/* Welcome Section */}
+            <Text style={styles.title}>Welcome to Iris</Text>
+            <Text style={styles.description}>
+              Iris is an offline Android chat application powered by the
+              llama.cpp framework. Designed to operate entirely offline, it
+              ensures privacy and independence from external servers. Whether
+              you're a developer exploring AI applications or a
+              privacy-conscious user, this app provides a seamless and secure
+              way to experience conversational AI. Please note that the app may
+              occasionally generate inaccurate results.
+            </Text>
+
+            {/* Features */}
+            <Text style={styles.sectionTitle}>Features</Text>
+
+            <FeatureItem
+              icon={require('../../assets/appIcons/correctIcon.png')}
+              title="Offline Functionality"
+              description="Runs without the need for an internet connection."
+            />
+            <FeatureItem
+              icon={require('../../assets/appIcons/correctIcon.png')}
+              title="Privacy First"
+              description="All data is processed locally on your device."
+            />
+            <FeatureItem
+              icon={require('../../assets/appIcons/correctIcon.png')}
+              title="Customizable Models"
+              description="Download and use your preferred AI model with ease."
+            />
+            <FeatureItem
+              icon={require('../../assets/appIcons/correctIcon.png')}
+              title="Open Source"
+              description="Built on the foundations of the llama.cpp Android example, enabling developers to contribute and modify."
+            />
+
+            {/* FAQ Section */}
+            <Text style={styles.sectionTitle}>FAQs</Text>
+
+            <FAQItem text="What is llama.cpp?" />
+            <FAQItem text="How does offline mode work?" />
+            <FAQItem text="Can I use custom AI models?" />
+            <FAQItem text="Is my data secure?" />
+          </View>
+        </ScrollView>
+      </View>
+    </LinearGradient>
   );
 };
 
@@ -108,7 +111,6 @@ const FAQItem = ({text}) => (
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    backgroundColor: '#0a0a23',
   },
   header: {
     flexDirection: 'row',
@@ -124,7 +126,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
     fontWeight: '600',
-    width: 240,
+    width: '85%',
   },
   headerIcon: {
     width: 20,
@@ -200,5 +202,8 @@ const styles = StyleSheet.create({
     width: 18,
     height: 18,
     tintColor: 'white',
+  },
+  gradientBackground: {
+    flex: 1,
   },
 });

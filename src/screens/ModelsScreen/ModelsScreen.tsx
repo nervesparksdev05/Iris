@@ -16,6 +16,7 @@ import {observer} from 'mobx-react-lite';
 import * as RNFS from '@dr.pogodin/react-native-fs';
 import DocumentPicker from 'react-native-document-picker';
 import {Portal} from 'react-native-paper';
+import LinearGradient from 'react-native-linear-gradient';
 
 import {useTheme} from '../../hooks';
 
@@ -324,73 +325,79 @@ export const ModelsScreen: React.FC = observer(() => {
     .filter(group => group.items.length > 0);
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 80}
-      style={styles.container}>
-      {/* Show Error Snackbar only if no dialog is visible */}
-      {!isShowingErrorDialog && activeError && (
-        <ErrorSnackbar
-          error={activeError}
-          onDismiss={handleDismissError}
-          onRetry={handleRetryAction}
-        />
-      )}
-
-      <SearchBox searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-
-      <Text style={styles.sectionTitle}>Suggested Models</Text>
-
-      <FlatList
-        testID="flat-list"
-        keyboardDismissMode="on-drag"
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={styles.listContainer}
-        data={flatListModels}
-        keyExtractor={item => item.type}
-        extraData={activeModelId}
-        renderItem={renderGroupHeader}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={[theme.colors.primary]}
+    <LinearGradient
+      colors={['#060A15', '#051632']}
+      style={styles.gradientBackground}
+      start={{x: 0.5, y: 0}}
+      end={{x: 0.5, y: 1}}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 80}
+        style={styles.container}>
+        {/* Show Error Snackbar only if no dialog is visible */}
+        {!isShowingErrorDialog && activeError && (
+          <ErrorSnackbar
+            error={activeError}
+            onDismiss={handleDismissError}
+            onRetry={handleRetryAction}
           />
-        }
-      />
+        )}
 
-      {/* DownloadErrorDialog with Portal for better visibility */}
-      <Portal>
-        <DownloadErrorDialog
-          visible={isShowingErrorDialog}
-          onDismiss={() => {
-            modelStore.clearDownloadError();
-          }}
-          error={modelStore.downloadError}
-          model={
-            modelStore.downloadError?.metadata?.modelId
-              ? modelStore.models.find(
-                  m => m.id === modelStore.downloadError?.metadata?.modelId,
-                )
-              : undefined
+        <SearchBox searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+
+        <Text style={styles.sectionTitle}>Suggested Models</Text>
+
+        <FlatList
+          testID="flat-list"
+          keyboardDismissMode="on-drag"
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={styles.listContainer}
+          data={flatListModels}
+          keyExtractor={item => item.type}
+          extraData={activeModelId}
+          renderItem={renderGroupHeader}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={[theme.colors.primary]}
+            />
           }
-          onTryAgain={modelStore.retryDownload}
         />
-      </Portal>
 
-      <HFModelSearch
-        visible={hfSearchVisible}
-        onDismiss={() => setHFSearchVisible(false)}
-      />
-      <FABGroup
-        onAddHFModel={() => setHFSearchVisible(true)}
-        onAddLocalModel={handleAddLocalModel}
-      />
-      <ModelSettingsSheet
-        isVisible={settingsVisible}
-        onClose={handleCloseSettings}
-        model={selectedModel}
-      />
-    </KeyboardAvoidingView>
+        {/* DownloadErrorDialog with Portal for better visibility */}
+        <Portal>
+          <DownloadErrorDialog
+            visible={isShowingErrorDialog}
+            onDismiss={() => {
+              modelStore.clearDownloadError();
+            }}
+            error={modelStore.downloadError}
+            model={
+              modelStore.downloadError?.metadata?.modelId
+                ? modelStore.models.find(
+                    m => m.id === modelStore.downloadError?.metadata?.modelId,
+                  )
+                : undefined
+            }
+            onTryAgain={modelStore.retryDownload}
+          />
+        </Portal>
+
+        <HFModelSearch
+          visible={hfSearchVisible}
+          onDismiss={() => setHFSearchVisible(false)}
+        />
+        <FABGroup
+          onAddHFModel={() => setHFSearchVisible(true)}
+          onAddLocalModel={handleAddLocalModel}
+        />
+        <ModelSettingsSheet
+          isVisible={settingsVisible}
+          onClose={handleCloseSettings}
+          model={selectedModel}
+        />
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 });

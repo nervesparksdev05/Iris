@@ -39,7 +39,11 @@ import { DownloadModelScreen } from './DownloadModelScreen';
 
 import {View, StyleSheet} from 'react-native';
 
-export const DownloadModelHome: React.FC = observer(() => {
+type Props = {
+  setShowDownloadScreen: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export const DownloadModelHome: React.FC<Props> = observer(({ setShowDownloadScreen }) => {
   const l10n = useContext(L10nContext);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [hfSearchVisible, setHFSearchVisible] = useState(false);
@@ -311,6 +315,7 @@ export const DownloadModelHome: React.FC = observer(() => {
               model={subItem}
               activeModelId={activeModelId}
               onOpenSettings={() => handleOpenSettings(subItem)}
+              setShowDownloadScreen={setShowDownloadScreen}
             />
           )}
         />
@@ -383,10 +388,10 @@ export const DownloadModelHome: React.FC = observer(() => {
           visible={hfSearchVisible}
           onDismiss={() => setHFSearchVisible(false)}
         />
-        <FABGroup
+        {/* <FABGroup
           onAddHFModel={() => setHFSearchVisible(true)}
           onAddLocalModel={handleAddLocalModel}
-        />
+        /> */}
         <ModelSettingsSheet
           isVisible={settingsVisible}
           onClose={handleCloseSettings}
@@ -409,7 +414,7 @@ const ModelStyles = StyleSheet.create({
     backgroundColor: '#2D3E50',
     borderRadius: 10,
     width: '90%',
-    maxHeight: '60%',
+    maxHeight: '40%',
     padding: 20,
   },
   scrollContainer: {

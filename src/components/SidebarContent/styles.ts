@@ -19,4 +19,7 @@ export const createStyles = (theme: MD3Theme) =>
       fontWeight: '500',
       marginLeft: 20,
     },
+    gradientBackground: {
+      flex: 1,
+    },
   });

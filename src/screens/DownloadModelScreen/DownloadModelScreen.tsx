@@ -42,10 +42,11 @@ interface ModelCardProps {
   activeModelId?: string;
   onFocus?: () => void;
   onOpenSettings?: () => void;
+  setShowDownloadScreen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const DownloadModelScreen: React.FC<ModelCardProps> = observer(
-  ({model, activeModelId, onOpenSettings}) => {
+  ({model, activeModelId, onOpenSettings, setShowDownloadScreen}) => {
     const l10n = React.useContext(L10nContext);
     const theme = useTheme();
     const styles = createStyles(theme);
@@ -54,6 +55,7 @@ export const DownloadModelScreen: React.FC<ModelCardProps> = observer(
 
     const [snackbarVisible, setSnackbarVisible] = useState(false);
     const [integrityError, setIntegrityError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const {memoryWarning, shortMemoryWarning} = useMemoryCheck(model);
     const {isOk: storageOk, message: storageNOkMessage} = useStorageCheck(
@@ -66,39 +68,68 @@ export const DownloadModelScreen: React.FC<ModelCardProps> = observer(
     const isDownloading = modelStore.isDownloading(model.id);
     const isHfModel = model.origin === ModelOrigin.HF;
 
+    const [isAutoLoading, setIsAutoLoading] = useState(false);
+
+    useEffect(() => {
+      if (isDownloaded && !integrityError) {
+        const autoLoadModel = async () => {
+          try {
+            setIsAutoLoading(true);
+            await modelStore.setDefaultModel(model.id);
+            await modelStore.initContext(model);
+            setShowDownloadScreen(false);
+            if (uiStore.autoNavigatetoChat) {
+              navigation.navigate('Chat');
+            }
+          } catch (error) {
+            console.error('Error auto-loading model:', error);
+            setSnackbarVisible(true);
+          } finally {
+            setIsAutoLoading(false);
+          }
+        };
+
+        const loadTimer = setTimeout(autoLoadModel, 2000);
+        return () => clearTimeout(loadTimer);
+      }
+    }, [
+      isDownloaded,
+      integrityError,
+      model.id,
+      navigation,
+      setShowDownloadScreen,
+    ]);
+
     useEffect(() => {
       if (isDownloaded) {
         checkModelFileIntegrity(model, modelStore).then(({errorMessage}) => {
-          if (!errorMessage) {
-            // Automatically handle the downloaded model
-            handleAutoLoadModel();
-          } else {
-            setIntegrityError(errorMessage);
-          }
+          setIntegrityError(errorMessage);
         });
       } else {
         setIntegrityError(null);
       }
     }, [isDownloaded, model]);
 
-    const handleAutoLoadModel = async () => {
-      try {
-        await modelStore.setDefaultModel(model.id);
-        
-        await modelStore.initContext(model);
-        
-        navigation.navigate('Chat');
-      } catch (error) {
-        console.error('Error auto-loading model:', error);
-        setSnackbarVisible(true);
-      }
-    };
-
     const stopDownload = useCallback(() => {
       modelStore.cancelDownload(model.id);
     }, [model.id]);
 
-
+    const handleLoadModel = async () => {
+      setIsLoading(true);
+      try {
+        await modelStore.setDefaultModel(model.id);
+        await modelStore.initContext(model);
+        setShowDownloadScreen(false);
+        if (uiStore.autoNavigatetoChat) {
+          navigation.navigate('Chat');
+        }
+      } catch (error) {
+        console.error('Error loading model:', error);
+        setSnackbarVisible(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
     const handleWarningPress = () => {
       setSnackbarVisible(true);
@@ -118,7 +149,7 @@ export const DownloadModelScreen: React.FC<ModelCardProps> = observer(
         )}
         {storageOk && (
           <TouchableOpacity
-            style={styles.downloadButton}
+            style={ModelStyles.downloadButton}
             onPress={() => modelStore.checkSpaceAndDownload(model.id)}
             disabled={!storageOk}>
             <Text style={styles.buttonText}>
@@ -129,6 +160,33 @@ export const DownloadModelScreen: React.FC<ModelCardProps> = observer(
       </View>
     );
 
+    const renderDownloadedState = () => {
+      if (isAutoLoading) {
+        return (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator
+              testID="loading-indicator"
+              animating={true}
+              color={theme.colors.primary}
+            />
+            <Text style={ModelStyles.loadingText}>Loading model...</Text>
+          </View>
+        );
+      }
+
+      if (integrityError) {
+        return (
+          <TouchableOpacity
+            style={ModelStyles.loadButton}
+            onPress={handleLoadModel}>
+            <Text style={styles.buttonText}>Try Loading Anyway</Text>
+          </TouchableOpacity>
+        );
+      }
+
+      return null;
+    };
+
     return (
       <ScrollView
         style={ModelStyles.scrollContainer}
@@ -137,18 +195,9 @@ export const DownloadModelScreen: React.FC<ModelCardProps> = observer(
           <Text style={ModelStyles.modelLabel}>{model.name}</Text>
 
           {isDownloaded ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator
-                testID="loading-indicator"
-                animating={true}
-                color={theme.colors.primary}
-              />
-              <Text style={ModelStyles.loadingText}>
-                Loading model...
-              </Text>
-            </View>
+            renderDownloadedState()
           ) : isDownloading ? (
-            <View style={styles.downloadingContainer}>
+            <View style={ModelStyles.downloadingContainer}>
               <Text style={ModelStyles.downloadingText}>
                 Downloading{' '}
                 <Text style={styles.progressPercent}>
@@ -163,14 +212,13 @@ export const DownloadModelScreen: React.FC<ModelCardProps> = observer(
               </TouchableOpacity>
 
               <Text style={ModelStyles.fileSize}>
-                File {getModelDescription(model, isActiveModel, modelStore, l10n)}
+                File{' '}
+                {getModelDescription(model, isActiveModel, modelStore, l10n)}
               </Text>
             </View>
           ) : (
             renderDownloadOverlay()
           )}
-
-        
 
           {/* Display warning icon if there's a memory warning */}
           {shortMemoryWarning && isDownloaded && (
@@ -267,7 +315,7 @@ const ModelStyles = StyleSheet.create({
     fontWeight: '900',
   },
   modelCard: {
-    backgroundColor: '#1B2A3C',
+    backgroundColor: '#0f172a',
     padding: 15,
     borderRadius: 12,
     marginBottom: 15,
@@ -284,17 +332,7 @@ const ModelStyles = StyleSheet.create({
     fontSize: 12,
     marginTop: 10,
   },
-  downloadButton: {
-    backgroundColor: '#2662ea',
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderRadius: 50,
-    height: 50,
-    width: 130,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 8,
-  },
+
   downloadText: {
     color: '#eafeff',
     fontWeight: 'bold',
@@ -319,5 +357,34 @@ const ModelStyles = StyleSheet.create({
   loadingText: {
     marginTop: 8,
     fontSize: 16,
+  },
+  downloadButton: {
+    backgroundColor: '#2662ea',
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    borderRadius: 200,
+    height: 40,
+    width: 115,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 8,
+    marginLeft: 5,
+  },
+  downloadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  loadButton: {
+    backgroundColor: '#2662ea',
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    borderRadius: 200,
+    height: 40,
+    width: 115,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 8,
   },
 });

@@ -24,6 +24,7 @@ import {L10nContext} from './src/utils';
 import {ROUTES} from './src/utils/navigationConstants';
 
 import LinearGradient from 'react-native-linear-gradient';
+import {Portal} from 'react-native-paper';
 
 import {SidebarContent, HeaderLeft, AppWithMigration} from './src/components';
 import {
@@ -41,14 +42,19 @@ import ModelLoadingScreen from './src/screens/ModelLoadingScreen/ModelLoadingScr
 import {DownloadModelScreen} from './src/screens/DownloadModelScreen/DownloadModelScreen';
 import {DownloadModelHome} from './src/screens/DownloadModelScreen/DownloadModelsHome';
 
+import {SwipeModalProvider, useSwipeModal} from './src/store/SwipeModalContext';
+import SwipeModal from './src/screens/GlobalSideBar/GlobalSideBar';
+import GlobalSwipeHandler from './src/screens/GlobalSideBar/GlobalHandler';
+
 const isDebugMode = __DEV__;
 const Drawer = createDrawerNavigator();
 const screenWidth = Dimensions.get('window').width;
 
-const App = observer(() => {
+const AppContent = observer(() => {
   const theme = useTheme();
   const styles = createStyles(theme);
   const currentL10n = l10n[uiStore.language];
+  const {isModalVisible, hideModal} = useSwipeModal();
 
   const [isModelLoading, setIsModelLoading] = React.useState(false);
   const [loadingModelName, setLoadingModelName] = React.useState('');
@@ -120,114 +126,124 @@ const App = observer(() => {
               <L10nContext.Provider value={currentL10n}>
                 <NavigationContainer>
                   <BottomSheetModalProvider>
-                    <Drawer.Navigator
-                      screenOptions={{
-                        headerLeft: () => <HeaderLeft />,
-                        drawerStyle: {width: screenWidth},
-                        headerStyle: {backgroundColor: 'transparent'},
-                        headerTintColor: theme.colors.onBackground,
-                        headerTitleStyle: styles.headerTitle,
-                        headerBackground: () => (
-                          <LinearGradient
-                            colors={[
-                              'rgba(6, 10, 21, 0.9)',
-                              'rgba(5, 22, 50, 0.9)',
-                            ]}
-                            style={StyleSheet.absoluteFill}
-                            start={{x: 0.5, y: 0}}
-                            end={{x: 0.5, y: 1}}
-                          />
-                        ),
-                      }}
-                      drawerContent={props => <SidebarContent {...props} />}>
-                      <Drawer.Screen
-                        name={ROUTES.CHAT}
-                        component={() => (
-                          <>
-                            <ChatScreen />
-                            {showDownloadScreen && (
-                              <View style={StyleSheet.absoluteFillObject}>
-                                <BlurView
-                                  style={StyleSheet.absoluteFill}
-                                  blurType="light"
-                                  blurAmount={1}
-                                  reducedTransparencyFallbackColor="white"
-                                />
-                                <DownloadModelHome />
-                              </View>
-                            )}
-                            {isModelLoading && (
-                              <View style={StyleSheet.absoluteFillObject}>
-                                <BlurView
-                                  style={StyleSheet.absoluteFill}
-                                  blurType="light"
-                                  blurAmount={1}
-                                  reducedTransparencyFallbackColor="white"
-                                />
-                                <ModelLoadingScreen
-                                  modelName={loadingModelName}
-                                />
-                              </View>
-                            )}
-                          </>
-                        )}
-                        options={{headerShown: false}}
-                      />
-
-                      <Drawer.Screen
-                        name={ROUTES.MODELS}
-                        component={gestureHandlerRootHOC(ModelsScreen)}
-                        options={{
-                          header: ({navigation}) => (
-                            <ModelHeader navigation={navigation} />
+                    <GlobalSwipeHandler>
+                      <Drawer.Navigator
+                        screenOptions={{
+                          headerLeft: () => <HeaderLeft />,
+                          drawerStyle: {width: screenWidth},
+                          headerStyle: {backgroundColor: 'transparent'},
+                          headerTintColor: theme.colors.onBackground,
+                          headerTitleStyle: styles.headerTitle,
+                          swipeEnabled: false,
+                          headerBackground: () => (
+                            <LinearGradient
+                              colors={[
+                                'rgba(6, 10, 21, 0.9)',
+                                'rgba(5, 22, 50, 0.9)',
+                              ]}
+                              style={StyleSheet.absoluteFill}
+                              start={{x: 0.5, y: 0}}
+                              end={{x: 0.5, y: 1}}
+                            />
                           ),
                         }}
-                      />
-
-                      {/* Other Drawer Screens */}
-                      <Drawer.Screen
-                        name={ROUTES.BENCHMARK}
-                        component={gestureHandlerRootHOC(BenchmarkScreen)}
-                        options={{
-                          headerStyle: styles.headerWithoutDivider,
-                          title: currentL10n.screenTitles.benchmark,
-                        }}
-                      />
-                      <Drawer.Screen
-                        name={ROUTES.SETTINGS}
-                        component={gestureHandlerRootHOC(SettingsScreen)}
-                        options={{
-                          headerStyle: styles.headerWithoutDivider,
-                          title: currentL10n.screenTitles.settings,
-                        }}
-                      />
-                      <Drawer.Screen
-                        name={ROUTES.APP_INFO}
-                        component={gestureHandlerRootHOC(AboutScreen)}
-                        options={{headerShown: false}}
-                      />
-                      <Drawer.Screen
-                        name={ROUTES.REPORT}
-                        component={gestureHandlerRootHOC(ReportScreen)}
-                        options={{headerShown: false}}
-                      />
-                      <Drawer.Screen
-                        name={ROUTES.CHANGE_PARAMETER}
-                        component={gestureHandlerRootHOC(ParametersPage)}
-                        options={{headerShown: false}}
-                      />
-                      {isDebugMode && (
+                        drawerContent={props => <SidebarContent {...props} />}>
                         <Drawer.Screen
-                          name={ROUTES.DEV_TOOLS}
-                          component={gestureHandlerRootHOC(DevToolsScreen)}
+                          name={ROUTES.CHAT}
+                          component={gestureHandlerRootHOC(() => (
+                            <>
+                              <ChatScreen />
+                              {showDownloadScreen && (
+                                <View style={StyleSheet.absoluteFillObject}>
+                                  <BlurView
+                                    style={StyleSheet.absoluteFill}
+                                    blurType="light"
+                                    blurAmount={1}
+                                    reducedTransparencyFallbackColor="white"
+                                  />
+                                  <DownloadModelHome setShowDownloadScreen={setShowDownloadScreen} />
+                                </View>
+                              )}
+                              {isModelLoading && (
+                                <View style={StyleSheet.absoluteFillObject}>
+                                  <BlurView
+                                    style={StyleSheet.absoluteFill}
+                                    blurType="light"
+                                    blurAmount={1}
+                                    reducedTransparencyFallbackColor="white"
+                                  />
+                                  <ModelLoadingScreen
+                                    modelName={loadingModelName}
+                                  />
+                                </View>
+                              )}
+                            </>
+                          ))}
+                          options={{headerShown: false}}
+                        />
+
+                        <Drawer.Screen
+                          name={ROUTES.MODELS}
+                          component={gestureHandlerRootHOC(ModelsScreen)}
                           options={{
-                            headerStyle: styles.headerWithoutDivider,
-                            title: 'Dev Tools',
+                            header: ({navigation}) => (
+                              <ModelHeader navigation={navigation} />
+                            ),
                           }}
                         />
-                      )}
-                    </Drawer.Navigator>
+
+                        {/* Other Drawer Screens */}
+                        <Drawer.Screen
+                          name={ROUTES.BENCHMARK}
+                          component={gestureHandlerRootHOC(BenchmarkScreen)}
+                          options={{
+                            headerStyle: styles.headerWithoutDivider,
+                            title: currentL10n.screenTitles.benchmark,
+                          }}
+                        />
+                        <Drawer.Screen
+                          name={ROUTES.SETTINGS}
+                          component={gestureHandlerRootHOC(SettingsScreen)}
+                          options={{
+                            headerStyle: styles.headerWithoutDivider,
+                            title: currentL10n.screenTitles.settings,
+                          }}
+                        />
+                        <Drawer.Screen
+                          name={ROUTES.APP_INFO}
+                          component={gestureHandlerRootHOC(AboutScreen)}
+                          options={{headerShown: false}}
+                        />
+                        <Drawer.Screen
+                          name={ROUTES.REPORT}
+                          component={gestureHandlerRootHOC(ReportScreen)}
+                          options={{headerShown: false}}
+                        />
+                        <Drawer.Screen
+                          name={ROUTES.CHANGE_PARAMETER}
+                          component={gestureHandlerRootHOC(ParametersPage)}
+                          options={{headerShown: false}}
+                        />
+                        {isDebugMode && (
+                          <Drawer.Screen
+                            name={ROUTES.DEV_TOOLS}
+                            component={gestureHandlerRootHOC(DevToolsScreen)}
+                            options={{
+                              headerStyle: styles.headerWithoutDivider,
+                              title: 'Dev Tools',
+                            }}
+                          />
+                        )}
+                      </Drawer.Navigator>
+                    </GlobalSwipeHandler>
                   </BottomSheetModalProvider>
+                  {/* Swipe Modal */}
+                  <Portal>
+                    <SwipeModal
+                      isVisible={isModalVisible}
+                      onClose={hideModal}
+                    />
+                  </Portal>
                 </NavigationContainer>
               </L10nContext.Provider>
             </PaperProvider>
@@ -237,6 +253,12 @@ const App = observer(() => {
     </GestureHandlerRootView>
   );
 });
+
+const App = () => (
+  <SwipeModalProvider>
+    <AppContent />
+  </SwipeModalProvider>
+);
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
@@ -248,11 +270,11 @@ const createStyles = (theme: Theme) =>
       elevation: 0,
       shadowOpacity: 0,
       borderBottomWidth: 0,
-      backgroundColor: 'transparent', // Make transparent
+      backgroundColor: 'transparent',
     },
     headerTitle: {
       ...theme.fonts.titleSmall,
-      color: 'white', // Ensure text is visible
+      color: 'white',
     },
   });
 

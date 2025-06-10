@@ -9,7 +9,6 @@ export const createStyles = (theme: Theme) =>
     container: {
       flex: 1,
       padding: 10,
-      backgroundColor: theme.colors.background,
     },
     listContainer: {
       paddingBottom: 150,
@@ -28,5 +27,8 @@ export const createStyles = (theme: Theme) =>
       color: '#888',
       fontSize: 14,
       marginBottom: 12,
+    },
+    gradientBackground: {
+      flex: 1,
     },
   });
