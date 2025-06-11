@@ -60,10 +60,10 @@ export const createStyles = ({
       gap: width * 0.025,
     },
     imageIcon: {
-      width: width * 0.075,
-      height: width * 0.075,
+      width: width * 0.11,
+      height: width * 0.11,
       tintColor: '#aaa',
-      marginLeft: -width * 0.05,
+      marginLeft: -width * 0.07,
     },
     marginRight: {
       marginRight: width * 0.04,

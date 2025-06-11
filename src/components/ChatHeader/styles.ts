@@ -17,7 +17,7 @@ export const createStyles = ({
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      paddingHorizontal: 16,
+      paddingLeft: 16,
       paddingBottom: 10,
       marginTop: 40,
     },

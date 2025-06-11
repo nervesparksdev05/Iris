@@ -4,13 +4,13 @@ import {
   Text,
   StyleSheet,
   Dimensions,
-  Animated,
+  // Animated,
   TouchableOpacity,
   StatusBar,
   Image,
 } from 'react-native';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
-import {runOnJS} from 'react-native-reanimated';
+// import {runOnJS} from 'react-native-reanimated';
 import LinearGradient from 'react-native-linear-gradient';
 import {BlurView} from '@react-native-community/blur';
 import {observer} from 'mobx-react';
@@ -18,6 +18,12 @@ import {modelStore} from '../../store';
 import {Portal} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Linking} from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  runOnJS,
+} from 'react-native-reanimated';
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 
@@ -28,24 +34,16 @@ interface SwipeModalProps {
 
 const SwipeModal: React.FC<SwipeModalProps> = observer(
   ({isVisible, onClose}) => {
-    const translateX = useRef(new Animated.Value(-screenWidth)).current;
+    const translateX = useSharedValue(-screenWidth);
+    const animatedStyle = useAnimatedStyle(() => ({
+      transform: [{translateX: translateX.value}],
+    }));
 
     useEffect(() => {
-      if (isVisible) {
-        Animated.spring(translateX, {
-          toValue: 0,
-          useNativeDriver: true,
-          tension: 100,
-          friction: 8,
-        }).start();
-      } else {
-        Animated.spring(translateX, {
-          toValue: -screenWidth,
-          useNativeDriver: true,
-          tension: 100,
-          friction: 8,
-        }).start();
-      }
+      translateX.value = withSpring(isVisible ? 0 : -screenWidth, {
+        damping: 15,
+        stiffness: 150,
+      });
     }, [isVisible]);
 
     const handleClose = () => {
@@ -55,19 +53,17 @@ const SwipeModal: React.FC<SwipeModalProps> = observer(
     const panGesture = Gesture.Pan()
       .onUpdate(event => {
         if (event.translationX < 0) {
-          translateX.setValue(event.translationX);
+          translateX.value = event.translationX;
         }
       })
       .onEnd(event => {
         if (event.translationX < -screenWidth * 0.3 || event.velocityX < -500) {
           runOnJS(handleClose)();
         } else {
-          Animated.spring(translateX, {
-            toValue: 0,
-            useNativeDriver: true,
-            tension: 100,
-            friction: 8,
-          }).start();
+          translateX.value = withSpring(0, {
+            damping: 15,
+            stiffness: 150,
+          });
         }
       });
 
@@ -92,13 +88,7 @@ const SwipeModal: React.FC<SwipeModalProps> = observer(
           </TouchableOpacity>
 
           <GestureDetector gesture={panGesture}>
-            <Animated.View
-              style={[
-                styles.modalContainer,
-                {
-                  transform: [{translateX}],
-                },
-              ]}>
+            <Animated.View style={[styles.modalContainer, animatedStyle]}>
               <LinearGradient
                 colors={['#060A15', '#051632']}
                 style={styles.gradientBackground}
@@ -179,11 +169,7 @@ const SwipeModal: React.FC<SwipeModalProps> = observer(
 
 const styles = StyleSheet.create({
   overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    ...StyleSheet.absoluteFillObject,
     zIndex: 1000,
   },
   backdrop: {
@@ -192,78 +178,69 @@ const styles = StyleSheet.create({
   modalContainer: {
     position: 'absolute',
     left: 0,
-    //   top: 0,
-    width: screenWidth * 0.85,
     top: 0,
     bottom: 0,
-
+    width: screenWidth * 0.85,
     zIndex: 1001,
-    borderTopRightRadius: 20,
-    borderBottomRightRadius: 20,
+    borderTopRightRadius: screenWidth * 0.05,
+    borderBottomRightRadius: screenWidth * 0.05,
     overflow: 'hidden',
   },
-
   gradientBackground: {
     flex: 1,
-    paddingTop: 50,
-    paddingHorizontal: 20,
+    paddingTop: screenHeight * 0.06,
+    paddingHorizontal: screenWidth * 0.05,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: screenHeight * 0.04,
   },
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   logoContainer: {
-    marginRight: 15,
+    marginRight: screenWidth * 0.04,
   },
   logo: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    // backgroundColor: '#4285F4',
+    width: screenWidth * 0.1,
+    height: screenWidth * 0.1,
+    borderRadius: screenWidth * 0.02,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  logoText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
   appName: {
     color: 'white',
-    fontSize: 24,
+    fontSize: screenWidth * 0.06,
     fontWeight: 'bold',
   },
   subtitle: {
     color: '#888',
-    fontSize: 14,
+    fontSize: screenWidth * 0.035,
   },
   closeButton: {
-    width: 30,
-    height: 30,
+    width: screenWidth * 0.08,
+    height: screenWidth * 0.08,
     justifyContent: 'center',
     alignItems: 'center',
   },
   closeButtonText: {
     color: 'white',
-    fontSize: 18,
+    fontSize: screenWidth * 0.05,
   },
   section: {
-    marginBottom: 30,
+    marginBottom: screenHeight * 0.03,
   },
   sectionTitle: {
     color: '#888',
-    fontSize: 14,
+    fontSize: screenWidth * 0.035,
     marginBottom: 8,
   },
   modelName: {
     color: 'white',
-    fontSize: 16,
+    fontSize: screenWidth * 0.045,
     fontWeight: '500',
   },
   contentArea: {
@@ -271,53 +248,37 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  largeText: {
-    color: 'rgba(255,255,255,0.1)',
-    fontSize: 200,
-    fontWeight: 'bold',
-  },
   bottomSection: {
-    paddingBottom: 50,
-  },
-  bottomText: {
-    color: '#888',
-    fontSize: 14,
-    textAlign: 'center',
-    marginBottom: 30,
-    lineHeight: 20,
-  },
-  emailText: {
-    color: '#4285F4',
+    paddingBottom: screenHeight * 0.06,
   },
   buttonContainer: {
-    gap: 15,
-    marginBottom: 20,
+    gap: screenHeight * 0.015,
+    marginBottom: screenHeight * 0.02,
   },
   actionButton: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingVertical: screenHeight * 0.015,
+    paddingHorizontal: screenWidth * 0.05,
     borderWidth: 1,
     borderColor: '#333',
-    borderRadius: 8,
+    borderRadius: screenWidth * 0.02,
     backgroundColor: 'rgba(255,255,255,0.05)',
   },
   buttonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: screenWidth * 0.045,
+    marginRight: screenWidth * 0.02,
   },
   githubIcon: {
-    width: 25,
-    height: 25,
-    borderRadius: 12,
-    overflow: 'hidden',
+    width: screenWidth * 0.06,
+    height: screenWidth * 0.06,
+    borderRadius: screenWidth * 0.03,
   },
-
   poweredBy: {
     color: '#666',
-    fontSize: 12,
+    fontSize: screenWidth * 0.03,
     textAlign: 'center',
   },
 });

@@ -73,13 +73,13 @@ export const createStyles = (theme: Theme) =>
       flexDirection: 'row',
       alignItems: 'center',
       marginTop: height * 0.018,
-      marginLeft: width * 0.08,
+      marginLeft: width * 0.01,
       marginBottom: height * 0.018,
     },
     defaultText: {
       color: '#aaa',
       fontSize: width * 0.033,
-      marginLeft: width * 0.05,
+      marginLeft: width * 0.01,
     },
     sizeText: {
       color: '#999',

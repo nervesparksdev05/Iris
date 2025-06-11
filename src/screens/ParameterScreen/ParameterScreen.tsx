@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import Slider from '@react-native-community/slider';
 import {useNavigation} from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
 
 const ParametersPage = () => {
   const [thread, setThread] = useState(0);
@@ -29,113 +30,122 @@ const ParametersPage = () => {
   };
 
   return (
-    <View style={styles.wrapper}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image
-            source={require('../assets/appIcons/backIcon.png')}
-            style={styles.headerIcon}
-          />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Parameters</Text>
-        <View style={{width: 20}} />
+    <LinearGradient
+      colors={['#060A15', '#051632']}
+      style={styles.gradientBackground}
+      start={{x: 0.5, y: 0}}
+      end={{x: 0.5, y: 1}}>
+      <View style={styles.wrapper}>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image
+              source={require('../../assets/appIcons/backIcon.png')}
+              style={styles.headerIcon}
+            />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Parameters</Text>
+          <View style={{width: 20}} />
+        </View>
+
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={{paddingBottom: 40}}>
+          <Text style={styles.note}>
+            After changing please Save the changes
+          </Text>
+
+          <View style={styles.card}>
+            {/* Thread */}
+            <Text style={styles.label}>Thread Selection</Text>
+            <Text style={styles.subLabel}>
+              Select thread for process, 0 for default
+            </Text>
+            <Text style={styles.value}>{thread}</Text>
+            <Slider
+              minimumValue={0}
+              maximumValue={10}
+              step={1}
+              value={thread}
+              onValueChange={setThread}
+              minimumTrackTintColor="#3c82f6"
+              maximumTrackTintColor="#999"
+              thumbTintColor="#3c82f6"
+            />
+
+            {/* Temperature */}
+            <View style={styles.sectionSpacing} />
+            <Text style={styles.label}>Temperature</Text>
+            <Text style={styles.subLabel}>Adjust randomness (0.0 - 1.0)</Text>
+            <Text style={styles.value}>{temperature.toFixed(2)}</Text>
+            <Slider
+              minimumValue={0}
+              maximumValue={1}
+              step={0.01}
+              value={temperature}
+              onValueChange={setTemperature}
+              minimumTrackTintColor="#3c82f6"
+              maximumTrackTintColor="#999"
+              thumbTintColor="#3c82f6"
+            />
+
+            {/* Top P */}
+            <View style={styles.sectionSpacing} />
+            <Text style={styles.label}>Top P</Text>
+            <Text style={styles.subLabel}>
+              Nucleus sampling threshold (0.0 - 1.0)
+            </Text>
+            <Text style={styles.value}>{topP.toFixed(2)}</Text>
+            <Slider
+              minimumValue={0}
+              maximumValue={1}
+              step={0.01}
+              value={topP}
+              onValueChange={setTopP}
+              minimumTrackTintColor="#3c82f6"
+              maximumTrackTintColor="#999"
+              thumbTintColor="#3c82f6"
+            />
+
+            {/* Top K */}
+            <View style={styles.sectionSpacing} />
+            <Text style={styles.label}>Top K</Text>
+            <Text style={styles.subLabel}>
+              Number of tokens to consider (0 - 50)
+            </Text>
+            <Text style={styles.value}>{topK}</Text>
+            <Slider
+              minimumValue={0}
+              maximumValue={50}
+              step={1}
+              value={topK}
+              onValueChange={setTopK}
+              minimumTrackTintColor="#3c82f6"
+              maximumTrackTintColor="#999"
+              thumbTintColor="#3c82f6"
+            />
+          </View>
+
+          {/* Buttons */}
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={styles.resetButton}
+              onPress={resetDefaults}>
+              <Text style={styles.resetButtonText}>Reset Default</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.saveButton} onPress={saveChanges}>
+              <Text style={styles.saveButtonText}>Save</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
       </View>
-
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={{paddingBottom: 40}}>
-        <Text style={styles.note}>After changing please Save the changes</Text>
-
-        <View style={styles.card}>
-          {/* Thread */}
-          <Text style={styles.label}>Thread Selection</Text>
-          <Text style={styles.subLabel}>
-            Select thread for process, 0 for default
-          </Text>
-          <Text style={styles.value}>{thread}</Text>
-          <Slider
-            minimumValue={0}
-            maximumValue={10}
-            step={1}
-            value={thread}
-            onValueChange={setThread}
-            minimumTrackTintColor="#3c82f6"
-            maximumTrackTintColor="#999"
-            thumbTintColor="#3c82f6"
-          />
-
-          {/* Temperature */}
-          <View style={styles.sectionSpacing} />
-          <Text style={styles.label}>Temperature</Text>
-          <Text style={styles.subLabel}>Adjust randomness (0.0 - 1.0)</Text>
-          <Text style={styles.value}>{temperature.toFixed(2)}</Text>
-          <Slider
-            minimumValue={0}
-            maximumValue={1}
-            step={0.01}
-            value={temperature}
-            onValueChange={setTemperature}
-            minimumTrackTintColor="#3c82f6"
-            maximumTrackTintColor="#999"
-            thumbTintColor="#3c82f6"
-          />
-
-          {/* Top P */}
-          <View style={styles.sectionSpacing} />
-          <Text style={styles.label}>Top P</Text>
-          <Text style={styles.subLabel}>
-            Nucleus sampling threshold (0.0 - 1.0)
-          </Text>
-          <Text style={styles.value}>{topP.toFixed(2)}</Text>
-          <Slider
-            minimumValue={0}
-            maximumValue={1}
-            step={0.01}
-            value={topP}
-            onValueChange={setTopP}
-            minimumTrackTintColor="#3c82f6"
-            maximumTrackTintColor="#999"
-            thumbTintColor="#3c82f6"
-          />
-
-          {/* Top K */}
-          <View style={styles.sectionSpacing} />
-          <Text style={styles.label}>Top K</Text>
-          <Text style={styles.subLabel}>
-            Number of tokens to consider (0 - 50)
-          </Text>
-          <Text style={styles.value}>{topK}</Text>
-          <Slider
-            minimumValue={0}
-            maximumValue={50}
-            step={1}
-            value={topK}
-            onValueChange={setTopK}
-            minimumTrackTintColor="#3c82f6"
-            maximumTrackTintColor="#999"
-            thumbTintColor="#3c82f6"
-          />
-        </View>
-
-        {/* Buttons */}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.resetButton} onPress={resetDefaults}>
-            <Text style={styles.resetButtonText}>Reset Default</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.saveButton} onPress={saveChanges}>
-            <Text style={styles.saveButtonText}>Save</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </View>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    backgroundColor: '#0a0a23',
   },
   header: {
     flexDirection: 'row',
@@ -156,7 +166,7 @@ const styles = StyleSheet.create({
     fontSize: 26,
     color: 'white',
     fontWeight: '400',
-    width: 230
+    width: 230,
   },
   container: {
     padding: 20,
@@ -223,6 +233,9 @@ const styles = StyleSheet.create({
   saveButtonText: {
     color: 'white',
     fontWeight: '600',
+  },
+  gradientBackground: {
+    flex: 1,
   },
 });
 

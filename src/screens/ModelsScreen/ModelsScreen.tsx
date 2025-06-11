@@ -388,10 +388,10 @@ export const ModelsScreen: React.FC = observer(() => {
           visible={hfSearchVisible}
           onDismiss={() => setHFSearchVisible(false)}
         />
-        {/* <FABGroup
+        <FABGroup
           onAddHFModel={() => setHFSearchVisible(true)}
           onAddLocalModel={handleAddLocalModel}
-        /> */}
+        />
         <ModelSettingsSheet
           isVisible={settingsVisible}
           onClose={handleCloseSettings}

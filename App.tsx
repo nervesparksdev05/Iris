@@ -37,10 +37,10 @@ import {
 } from './src/screens';
 import {ModelHeader} from './src/screens/ModelsScreen/ModelHeader/ModelHeader';
 import ReportScreen from './src/screens/ReportScreen/ReportScreen';
-import ParametersPage from './src/appComponents/Parameter';
 import ModelLoadingScreen from './src/screens/ModelLoadingScreen/ModelLoadingScreen';
 import {DownloadModelScreen} from './src/screens/DownloadModelScreen/DownloadModelScreen';
 import {DownloadModelHome} from './src/screens/DownloadModelScreen/DownloadModelsHome';
+import ParametersPage from './src/screens/ParameterScreen/ParameterScreen';
 
 import {SwipeModalProvider, useSwipeModal} from './src/store/SwipeModalContext';
 import SwipeModal from './src/screens/GlobalSideBar/GlobalSideBar';
