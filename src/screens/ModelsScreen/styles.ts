@@ -13,7 +13,6 @@ export const createStyles = (theme: Theme) =>
       padding: width * 0.025,
     },
     listContainer: {
-      paddingBottom: height * 0.18,
     },
     filterContainer: {
       flexDirection: 'row',

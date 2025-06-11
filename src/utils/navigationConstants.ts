@@ -5,10 +5,11 @@ export const ROUTES = {
   MODELS: 'Models',
   PALS: 'Pals (experimental)',
   BENCHMARK: 'Benchmark',
-  SETTINGS: 'Settings',
+  // SETTINGS: 'Settings',
   APP_INFO: 'App Info',
   REPORT: 'report',
   CHANGE_PARAMETER: 'change parameter',
+  SIDEBAR: 'sidebar',
 
   // Dev tools route. Only available in debug mode.
   DEV_TOOLS: 'Dev Tools',
