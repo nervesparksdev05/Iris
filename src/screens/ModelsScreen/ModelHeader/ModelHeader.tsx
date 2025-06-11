@@ -2,29 +2,33 @@ import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
 import {useTheme} from 'react-native-paper';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useDownloadScreen} from '../../../store/DownloadScreenContext';
 
 export const ModelHeader = ({navigation}) => {
   const theme = useTheme();
+  const {showDownloadScreen} = useDownloadScreen();
 
   return (
     <SafeAreaView edges={['top']} style={styles.safeArea}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image
-            source={require('../../../assets/appIcons/backIcon.png')}
-            style={styles.headerIcon}
-          />
-        </TouchableOpacity>
+      {!showDownloadScreen && (
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image
+              source={require('../../../assets/appIcons/backIcon.png')}
+              style={styles.headerIcon}
+            />
+          </TouchableOpacity>
 
-        <Text style={styles.headerTitle}>Models</Text>
+          <Text style={styles.headerTitle}>Models</Text>
 
-        <TouchableOpacity onPress={() => {}}>
-          <Image
-            source={require('../../../assets/appIcons/refreshIcon.png')}
-            style={styles.headerIcon}
-          />
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity onPress={() => {}}>
+            <Image
+              source={require('../../../assets/appIcons/refreshIcon.png')}
+              style={styles.headerIcon}
+            />
+          </TouchableOpacity>
+        </View>
+      )}
     </SafeAreaView>
   );
 };

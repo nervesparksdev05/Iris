@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Dimensions, StyleSheet, View, Alert, Easing} from 'react-native';
 import {observer} from 'mobx-react';
 import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator, TransitionPresets} from '@react-navigation/stack'
+import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import {Provider as PaperProvider, Portal} from 'react-native-paper';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
@@ -43,6 +43,10 @@ import {l10n} from './src/utils/l10n';
 import {initLocale} from './src/utils';
 import {L10nContext} from './src/utils';
 import {ROUTES} from './src/utils/navigationConstants';
+import {
+  DownloadScreenProvider,
+  useDownloadScreen,
+} from './src/store/DownloadScreenContext';
 
 const Stack = createStackNavigator();
 const screenWidth = Dimensions.get('window').width;
@@ -56,7 +60,7 @@ const dissolveAnimation = {
       animation: 'timing',
       config: {
         duration: 400,
-        easing: Easing.bezier(0.25, 0.46, 0.45, 0.94), 
+        easing: Easing.bezier(0.25, 0.46, 0.45, 0.94),
       },
     },
     close: {
@@ -141,7 +145,7 @@ const crossFadeDissolve = {
   },
   cardStyleInterpolator: ({current, next, layouts}) => {
     const progress = current.progress;
-    
+
     return {
       cardStyle: {
         opacity: progress.interpolate({
@@ -223,7 +227,7 @@ const ChatScreenWrapper = observer(() => {
 
   const [isModelLoading, setIsModelLoading] = React.useState(false);
   const [loadingModelName, setLoadingModelName] = React.useState('');
-  const [showDownloadScreen, setShowDownloadScreen] = React.useState(false);
+  const {showDownloadScreen, setShowDownloadScreen} = useDownloadScreen();
 
   const autoLoadModel = async () => {
     try {
@@ -271,6 +275,12 @@ const ChatScreenWrapper = observer(() => {
     init();
   }, []);
 
+  React.useEffect(() => {
+    if (modelStore.availableModels.length === 0) {
+      setShowDownloadScreen(true);
+    }
+  }, [modelStore.availableModels.length]);
+
   return (
     <>
       <ChatScreen />
@@ -282,9 +292,7 @@ const ChatScreenWrapper = observer(() => {
             blurAmount={1}
             reducedTransparencyFallbackColor="white"
           />
-          <DownloadModelHome
-            setShowDownloadScreen={setShowDownloadScreen}
-          />
+          <DownloadModelHome />
         </View>
       )}
       {isModelLoading && (
@@ -336,7 +344,7 @@ const StackScreens = observer(() => {
         component={gestureHandlerRootHOC(ChatScreenWrapper)}
         options={{
           headerShown: false,
-          ...crossFadeDissolve, 
+          ...crossFadeDissolve,
         }}
       />
       <Stack.Screen
@@ -398,7 +406,7 @@ const StackScreens = observer(() => {
         component={gestureHandlerRootHOC(ParametersPage)}
         options={{
           headerShown: false,
-          ...blurDissolve, 
+          ...blurDissolve,
         }}
       />
       <Stack.Screen
@@ -406,7 +414,7 @@ const StackScreens = observer(() => {
         component={gestureHandlerRootHOC(DownloadModelScreen)}
         options={{
           headerShown: false,
-          ...crossFadeDissolve, 
+          ...crossFadeDissolve,
         }}
       />
     </Stack.Navigator>
@@ -428,13 +436,15 @@ const AppContent = observer(() => {
           <KeyboardProvider statusBarTranslucent navigationBarTranslucent>
             <PaperProvider theme={theme}>
               <L10nContext.Provider value={currentL10n}>
-                <NavigationContainer>
-                  <BottomSheetModalProvider>
-                    <GlobalSwipeHandler>
-                      <StackScreens />
-                    </GlobalSwipeHandler>
-                  </BottomSheetModalProvider>
-                </NavigationContainer>
+                <DownloadScreenProvider>
+                  <NavigationContainer>
+                    <BottomSheetModalProvider>
+                      <GlobalSwipeHandler>
+                        <StackScreens />
+                      </GlobalSwipeHandler>
+                    </BottomSheetModalProvider>
+                  </NavigationContainer>
+                </DownloadScreenProvider>
               </L10nContext.Provider>
             </PaperProvider>
           </KeyboardProvider>

@@ -7,6 +7,8 @@ import {
   KeyboardAvoidingView,
   TextInput,
   Text,
+  View,
+  StyleSheet,
 } from 'react-native';
 
 import {toJS, reaction} from 'mobx';
@@ -30,6 +32,7 @@ import {
   ErrorSnackbar,
   ModelSettingsSheet,
 } from '../../components';
+import {BlurView} from '@react-native-community/blur';
 
 import {uiStore, modelStore, hfStore, UIStore} from '../../store';
 
@@ -37,6 +40,8 @@ import {L10nContext} from '../../utils';
 import {Model, ModelOrigin} from '../../utils/types';
 import {ErrorState} from '../../utils/errors';
 import SearchBox from './SearchBox';
+import {useDownloadScreen} from '../../store/DownloadScreenContext';
+import {DownloadModelHome} from '../DownloadModelScreen/DownloadModelsHome';
 
 export const ModelsScreen: React.FC = observer(() => {
   const l10n = useContext(L10nContext);
@@ -56,6 +61,13 @@ export const ModelsScreen: React.FC = observer(() => {
 
   const filters = uiStore.pageStates.modelsScreen.filters;
   const expandedGroups = uiStore.pageStates.modelsScreen.expandedGroups;
+  const {showDownloadScreen, setShowDownloadScreen} = useDownloadScreen();
+
+  React.useEffect(() => {
+    if (modelStore.availableModels.length === 0) {
+      setShowDownloadScreen(true);
+    }
+  }, [modelStore.availableModels.length]);
 
   // Set up MobX reactions to track store changes
   useEffect(() => {
@@ -398,6 +410,18 @@ export const ModelsScreen: React.FC = observer(() => {
           model={selectedModel}
         />
       </KeyboardAvoidingView>
+
+      {showDownloadScreen && (
+        <View style={StyleSheet.absoluteFillObject}>
+          <BlurView
+            style={StyleSheet.absoluteFill}
+            blurType="light"
+            blurAmount={1}
+            reducedTransparencyFallbackColor="white"
+          />
+          <DownloadModelHome />
+        </View>
+      )}
     </LinearGradient>
   );
 });

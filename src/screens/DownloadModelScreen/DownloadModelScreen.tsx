@@ -34,6 +34,7 @@ import {
 } from '../../utils';
 
 import {createStyles} from '../ModelsScreen/ModelCard/styles';
+import { useDownloadScreen } from '../../store/DownloadScreenContext';
 
 type ChatScreenNavigationProp = DrawerNavigationProp<RootDrawerParamList>;
 
@@ -42,14 +43,14 @@ interface ModelCardProps {
   activeModelId?: string;
   onFocus?: () => void;
   onOpenSettings?: () => void;
-  setShowDownloadScreen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const DownloadModelScreen: React.FC<ModelCardProps> = observer(
-  ({model, activeModelId, onOpenSettings, setShowDownloadScreen}) => {
+  ({model, activeModelId, onOpenSettings}) => {
     const l10n = React.useContext(L10nContext);
     const theme = useTheme();
     const styles = createStyles(theme);
+    const {setShowDownloadScreen} = useDownloadScreen()
 
     const navigation = useNavigation<ChatScreenNavigationProp>();
 

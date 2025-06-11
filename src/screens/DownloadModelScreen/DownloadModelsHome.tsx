@@ -40,11 +40,11 @@ import {DownloadModelScreen} from './DownloadModelScreen';
 import {View, StyleSheet} from 'react-native';
 
 type Props = {
-  setShowDownloadScreen: React.Dispatch<React.SetStateAction<boolean>>;
+  
 };
 
 export const DownloadModelHome: React.FC<Props> = observer(
-  ({setShowDownloadScreen}) => {
+  () => {
     const l10n = useContext(L10nContext);
     const [refreshing, setRefreshing] = useState<boolean>(false);
     const [hfSearchVisible, setHFSearchVisible] = useState(false);
@@ -316,7 +316,6 @@ export const DownloadModelHome: React.FC<Props> = observer(
                 model={subItem}
                 activeModelId={activeModelId}
                 onOpenSettings={() => handleOpenSettings(subItem)}
-                setShowDownloadScreen={setShowDownloadScreen}
               />
             )}
           />
