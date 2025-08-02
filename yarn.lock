@@ -1037,10 +1037,15 @@
   dependencies:
     regenerator-runtime "^0.14.0"
 
-"@babel/runtime@^7.12.5", "@babel/runtime@^7.25.0", "@babel/runtime@^7.27.1":
+"@babel/runtime@^7.12.5", "@babel/runtime@^7.25.0":
   version "7.27.1"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.27.1.tgz#9fce313d12c9a77507f264de74626e87fd0dc541"
   integrity sha512-1x3D2xEk2fRo3PAhwQwu5UubzgiVWSXTBfWpVd2Mx2AzRqJuDJCsgaDVZ7HB5iGzDW1Hl1sWN2mFyKjmR9uAog==
+
+"@babel/runtime@^7.27.4":
+  version "7.28.2"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.28.2.tgz#2ae5a9d51cc583bd1f5673b3bb70d6d819682473"
+  integrity sha512-KHp2IflsnGywDjBWDkR9iEqiWSpc8GIi0lgTT3mOElT0PP1tG26P4tmFI2YvAdzgq9RGyoHZQEIEdZy6Ec5xCA==
 
 "@babel/template@^7.25.0", "@babel/template@^7.27.1", "@babel/template@^7.3.3":
   version "7.27.2"
@@ -1253,10 +1258,10 @@
     "@types/conventional-commits-parser" "^5.0.0"
     chalk "^5.3.0"
 
-"@dr.pogodin/react-native-fs@^2.33.1":
-  version "2.33.1"
-  resolved "https://registry.yarnpkg.com/@dr.pogodin/react-native-fs/-/react-native-fs-2.33.1.tgz#9349fa625b19f9b17f1e653cd44e2dc451af2331"
-  integrity sha512-+Dei8L8LIFI/sNPdFLj1jWPv9gXUKcYfeIqYc1hrbQHn8r5JsgRZGbvAgxJ8LUH9cDh4uFc7Tv4xh2GWt/FmMw==
+"@dr.pogodin/react-native-fs@2.30.3":
+  version "2.30.3"
+  resolved "https://registry.yarnpkg.com/@dr.pogodin/react-native-fs/-/react-native-fs-2.30.3.tgz#9b02f603642159ec50412fc176f6a9dde59ac51d"
+  integrity sha512-EphKBv07CFwyJubP5xLm39TUB2g1BXkyGAf8HtRbXM7WQLKqMsU6CLgQojQJNQPH1cWOnkHYiGnw6flf0PXHWA==
   dependencies:
     buffer "^6.0.3"
     http-status-codes "^2.3.0"
@@ -2114,10 +2119,10 @@
     rxjs "^7.8.1"
     sql-escape-string "^1.1.0"
 
-"@pocketpalai/llama.rn@0.5.8-1":
-  version "0.5.8-1"
-  resolved "https://registry.yarnpkg.com/@pocketpalai/llama.rn/-/llama.rn-0.5.8-1.tgz#247bf66e1ad0293663a850a40f25a408916e97e4"
-  integrity sha512-bQWe18RPNjjpjjfTfOUEEAUYu54HfnkShzeAqcMD1Vts6JBLCyfQrGmLY2igacLBjXktt9LAKKoC0y051iUo0A==
+"@pocketpalai/llama.rn@^0.6.5-1":
+  version "0.6.5-1"
+  resolved "https://registry.yarnpkg.com/@pocketpalai/llama.rn/-/llama.rn-0.6.5-1.tgz#dd707aaa990e57def4e15cdeeccdb54ad4910cd5"
+  integrity sha512-rI9X1A6AkfvsvoiF0FADKNhEh+I3u239sR0LVUS/qfU1QaJpgPTqiT5Hh0qkT0rXdxPWvhubsHmNMNs0GqOL4w==
 
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
   version "1.1.2"
@@ -7466,6 +7471,11 @@ react-native-haptic-feedback@^2.3.3:
   resolved "https://registry.yarnpkg.com/react-native-haptic-feedback/-/react-native-haptic-feedback-2.3.3.tgz#88b6876e91399a69bd1b551fe1681b2f3dc1214e"
   integrity sha512-svS4D5PxfNv8o68m9ahWfwje5NqukM3qLS48+WTdhbDkNUkOhP9rDfDSRHzlhk4zq+ISjyw95EhLeh8NkKX5vQ==
 
+react-native-image-picker@^8.2.1:
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-8.2.1.tgz#1ac7826563cbaa5d5298d9f2acc53c69805e5393"
+  integrity sha512-FBeGYJGFDjMdGCcyubDJgBAPCQ4L1D3hwLXyUU91jY9ahOZMTbluceVvRmrEKqnDPFJ0gF1NVhJ0nr1nROFLdg==
+
 react-native-image-viewing@^0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/react-native-image-viewing/-/react-native-image-viewing-0.2.2.tgz#fb26e57d7d3d9ce4559a3af3d244387c0367242b"
@@ -7618,6 +7628,11 @@ react-native-vector-icons@^10.1.0:
   dependencies:
     prop-types "^15.7.2"
     yargs "^16.1.1"
+
+react-native-vision-camera@^4.6.4:
+  version "4.7.1"
+  resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-4.7.1.tgz#4a373e8d2ebad4d652eb0de1a50e620940a074dd"
+  integrity sha512-N6qqjhUSC9XRUQzqx+647+sPsrf9FcEYGjRhif1WNy2z8AwPMOSLINIcmMM6C4drxH2CdiaULGAWHpx/cnsBpw==
 
 react-native@0.76.3:
   version "0.76.3"

@@ -181,7 +181,7 @@ export const DeviceInfoCard = ({onDeviceInfo, testId}: Props) => {
 
             <View style={styles.deviceInfoRow}>
               <Text variant="labelSmall" style={styles.deviceInfoLabel}>
-                Android:
+                OS:
               </Text>
 
               <Text variant="bodySmall" style={styles.deviceInfoValue}>
