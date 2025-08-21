@@ -1,4 +1,5 @@
 import * as RNFS from '@dr.pogodin/react-native-fs';
+import axios from 'axios';
 import {makeAutoObservable, observable} from 'mobx';
 import {NativeEventEmitter, NativeModules, Platform} from 'react-native';
 
@@ -254,6 +255,27 @@ export class DownloadManager {
     authToken?: string | null,
   ): Promise<void> {
     try {
+      // Attempt to pre-resolve Hugging Face redirect to CDN URL to reduce handshake/redirect latency
+      let downloadUrl = model.downloadUrl!;
+      try {
+        if (downloadUrl.includes('huggingface.co')) {
+          const headResponse = await axios.head(downloadUrl, {
+            maxRedirects: 0,
+            // We need to read 3xx without auto-following
+            validateStatus: status => (status >= 200 && status < 400) || status === 403,
+            headers: {
+              ...(authToken ? {Authorization: `Bearer ${authToken}`} : {}),
+              Accept: 'application/octet-stream',
+            },
+          });
+          const location = (headResponse.headers as any)?.location as string | undefined;
+          if (location && /^https?:\/\//.test(location)) {
+            downloadUrl = location;
+          }
+        }
+      } catch (_e) {
+        // Fallback silently to the original URL
+      }
       const downloadJob: DownloadJob = {
         model,
         state: {
@@ -271,13 +293,17 @@ export class DownloadManager {
 
       // Create the download task
       const downloadResult = RNFS.downloadFile({
-        fromUrl: model.downloadUrl!,
+        fromUrl: downloadUrl,
         toFile: destinationPath,
         background: uiStore.iOSBackgroundDownloading,
         discretionary: false,
         progressInterval: 800,
+        // Proactively drop sluggish connections and retry via RNFS internals
+        readTimeout: 60000,
+        connectionTimeout: 60000,
         headers: {
           ...(authToken ? {Authorization: `Bearer ${authToken}`} : {}),
+          Accept: 'application/octet-stream',
         },
         begin: res => {
           console.log(`${TAG}: Download started for ID: ${model.id}`, {

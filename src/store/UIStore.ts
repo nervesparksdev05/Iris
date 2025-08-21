@@ -37,7 +37,7 @@ export class UIStore {
 
   displayMemUsage = false;
 
-  iOSBackgroundDownloading = true;
+  iOSBackgroundDownloading = false;
 
   isHydrated: boolean = false;
 
@@ -70,7 +70,7 @@ export class UIStore {
     });
 
     // backwards compatibility. Removed this from the ui settings screen.
-    this.iOSBackgroundDownloading = true;
+    this.iOSBackgroundDownloading = false;
   }
 
   setValue<T extends keyof typeof this.pageStates>(
