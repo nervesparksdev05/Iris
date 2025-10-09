@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -6,37 +6,87 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  Alert,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
+import { observer } from 'mobx-react';
+import { chatSessionStore } from '../../store';
+import { defaultCompletionParams } from '../../utils/completionSettingsVersions';
 
-const ParametersPage = () => {
+const ParametersPage = observer(() => {
   const [thread, setThread] = useState(0);
-  const [temperature, setTemperature] = useState(0);
-  const [topP, setTopP] = useState(0);
-  const [topK, setTopK] = useState(0);
+  const [temperature, setTemperature] = useState(0.7);
+  const [topP, setTopP] = useState(0.95);
+  const [topK, setTopK] = useState(40);
   const navigation = useNavigation();
 
-  const resetDefaults = () => {
-    setThread(0);
-    setTemperature(0);
-    setTopP(0);
-    setTopK(0);
-  };
+  // Load current settings when component mounts or activeSessionId changes
+  useEffect(() => {
+    const currentSession = chatSessionStore.sessions.find(
+      (s) => s.id === chatSessionStore.activeSessionId,
+    );
 
-  const saveChanges = () => {
-    console.log('Parameters saved:', {thread, temperature, topP, topK});
-    // You can add actual parameter saving logic here
-    // For example, save to AsyncStorage or update a global store
-  };
+    if (currentSession?.completionSettings) {
+      const settings = currentSession.completionSettings;
+      setThread(settings.n_threads ?? defaultCompletionParams.n_threads ?? 0);
+      setTemperature(settings.temperature ?? defaultCompletionParams.temperature ?? 0.7);
+      setTopP(settings.top_p ?? defaultCompletionParams.top_p ?? 0.95);
+      setTopK(settings.top_k ?? defaultCompletionParams.top_k ?? 40);
+    } else {
+      // Use default values for new chats
+      setThread(defaultCompletionParams.n_threads ?? 0);
+      setTemperature(defaultCompletionParams.temperature ?? 0.7);
+      setTopP(defaultCompletionParams.top_p ?? 0.95);
+      setTopK(defaultCompletionParams.top_k ?? 40);
+    }
+  }, [chatSessionStore.activeSessionId, chatSessionStore.sessions]);
+
+  const resetDefaults = useCallback(() => {
+    setThread(defaultCompletionParams.n_threads ?? 0);
+    setTemperature(defaultCompletionParams.temperature ?? 0.7);
+    setTopP(defaultCompletionParams.top_p ?? 0.95);
+    setTopK(defaultCompletionParams.top_k ?? 40);
+  }, []);
+
+  const saveChanges = useCallback(async () => {
+    try {
+      const currentSession = chatSessionStore.sessions.find(
+        (s) => s.id === chatSessionStore.activeSessionId,
+      );
+
+      const updatedSettings = {
+        n_threads: thread,
+        temperature: temperature,
+        top_p: topP,
+        top_k: topK,
+      };
+
+      if (currentSession) {
+        // Update existing session
+        await chatSessionStore.updateSessionCompletionSettings(updatedSettings);
+        Alert.alert('Success', 'Parameters saved successfully!');
+      } else {
+        // Update settings for new chats
+        chatSessionStore.newChatCompletionSettings = {
+          ...chatSessionStore.newChatCompletionSettings,
+          ...updatedSettings,
+        };
+        Alert.alert('Success', 'Parameters saved for new chats!');
+      }
+    } catch (error) {
+      console.error('Error saving parameters:', error);
+      Alert.alert('Error', 'Failed to save parameters. Please try again.');
+    }
+  }, [thread, temperature, topP, topK]);
 
   return (
     <LinearGradient
       colors={['#060A15', '#051632']}
       style={styles.gradientBackground}
-      start={{x: 0.5, y: 0}}
-      end={{x: 0.5, y: 1}}>
+      start={{ x: 0.5, y: 0 }}
+      end={{ x: 0.5, y: 1 }}>
       <View style={styles.wrapper}>
         {/* Header */}
         <View style={styles.header}>
@@ -47,22 +97,18 @@ const ParametersPage = () => {
             />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Parameters</Text>
-          <View style={{width: 20}} />
+          <View style={{ width: 20 }} />
         </View>
 
         <ScrollView
           style={styles.container}
-          contentContainerStyle={{paddingBottom: 40}}>
-          <Text style={styles.note}>
-            After changing please Save the changes
-          </Text>
+          contentContainerStyle={{ paddingBottom: 40 }}>
+          <Text style={styles.note}>After changing, please save the changes</Text>
 
           <View style={styles.card}>
             {/* Thread */}
             <Text style={styles.label}>Thread Selection</Text>
-            <Text style={styles.subLabel}>
-              Select thread for process, 0 for default
-            </Text>
+            <Text style={styles.subLabel}>Select thread for process, 0 for default</Text>
             <Text style={styles.value}>{thread}</Text>
             <Slider
               minimumValue={0}
@@ -94,9 +140,7 @@ const ParametersPage = () => {
             {/* Top P */}
             <View style={styles.sectionSpacing} />
             <Text style={styles.label}>Top P</Text>
-            <Text style={styles.subLabel}>
-              Nucleus sampling threshold (0.0 - 1.0)
-            </Text>
+            <Text style={styles.subLabel}>Nucleus sampling threshold (0.0 - 1.0)</Text>
             <Text style={styles.value}>{topP.toFixed(2)}</Text>
             <Slider
               minimumValue={0}
@@ -112,9 +156,7 @@ const ParametersPage = () => {
             {/* Top K */}
             <View style={styles.sectionSpacing} />
             <Text style={styles.label}>Top K</Text>
-            <Text style={styles.subLabel}>
-              Number of tokens to consider (0 - 50)
-            </Text>
+            <Text style={styles.subLabel}>Number of tokens to consider (0 - 50)</Text>
             <Text style={styles.value}>{topK}</Text>
             <Slider
               minimumValue={0}
@@ -130,9 +172,7 @@ const ParametersPage = () => {
 
           {/* Buttons */}
           <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.resetButton}
-              onPress={resetDefaults}>
+            <TouchableOpacity style={styles.resetButton} onPress={resetDefaults}>
               <Text style={styles.resetButtonText}>Reset Default</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.saveButton} onPress={saveChanges}>
@@ -143,7 +183,7 @@ const ParametersPage = () => {
       </View>
     </LinearGradient>
   );
-};
+});
 
 const styles = StyleSheet.create({
   wrapper: {
