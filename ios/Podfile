@@ -5,6 +5,9 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
+# 👇 ADD THIS LINE BELOW
+project 'PocketPal.xcodeproj'
+
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
@@ -39,26 +42,15 @@ target 'PocketPal' do
   pod 'FirebaseAppCheck', :modular_headers => true
   pod 'GoogleUtilities', :modular_headers => true
 
-  # Uncomment this line if you're not using auto-linking or if auto-linking causes trouble
-  # pod 'WatermelonDB', path: '../node_modules/@nozbe/watermelondb'
-  
-  # WatermelonDB dependency, should not be needed on modern React Native
-  # (please file an issue if this causes issues for you)
-  # pod 'React-jsi', path: '../node_modules/react-native/ReactCommon/jsi', modular_headers: true
-  
   # WatermelonDB dependency
   pod 'simdjson', path: '../node_modules/@nozbe/simdjson', modular_headers: true
 
-
   post_install do |installer|
-    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
       installer,
       config[:reactNativePath],
       :mac_catalyst_enabled => false,
-      # :ccache_enabled => true
     )
   end
-
-
 end
+		
