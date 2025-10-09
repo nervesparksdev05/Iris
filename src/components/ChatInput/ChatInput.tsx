@@ -157,7 +157,7 @@ export const ChatInput = observer(
     });
 
     const isBackgroundLight = Color(inputBackgroundColor).isLight();
-    const inputTextColor = isBackgroundLight ? '#333333' : '#DADDE6';
+    const inputTextColor = '#ffffff';
 
     return (
       <View style={styles.container}>
@@ -222,10 +222,18 @@ export const ChatInput = observer(
                   <ChevronUpIcon stroke={theme.colors.onSurface} />
                 </Animated.View>
               </TouchableOpacity> */}
-              <Image
-                source={require('../../assets/appIcons/micIcon.png')}
-                style={styles.imageIcon}
-              />
+              <TouchableOpacity
+                onPress={() => {
+                  // For now, focus the text input when mic is pressed
+                  // TODO: Implement actual voice input functionality
+                  inputRef.current?.focus();
+                }}
+                style={styles.micButton}>
+                <Image
+                  source={require('../../assets/appIcons/micIcon.png')}
+                  style={styles.imageIcon}
+                />
+              </TouchableOpacity>
               <View style={styles.inputInnerContainer}>
                 {activePal?.name && hasActiveModel && (
                   <Text

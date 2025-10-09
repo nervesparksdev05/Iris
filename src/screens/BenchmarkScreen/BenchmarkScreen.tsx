@@ -1,4 +1,4 @@
-import {View, ScrollView} from 'react-native';
+import {View, ScrollView, Alert} from 'react-native';
 import React, {useState, useCallback, useContext} from 'react';
 
 import {v4 as uuidv4} from 'uuid';
@@ -143,9 +143,11 @@ export const BenchmarkScreen: React.FC = observer(() => {
 
   const runBenchmark = async () => {
     if (!modelStore.context || !modelStore.activeModel) {
+      console.warn('Benchmark: No active model or context available');
       return;
     }
 
+    console.log('Starting benchmark with model:', modelStore.activeModel.name);
     setIsRunning(true);
     let peakMemoryUsage: NonNullable<
       BenchmarkResult['peakMemoryUsage']
@@ -198,9 +200,16 @@ export const BenchmarkScreen: React.FC = observer(() => {
       };
 
       benchmarkStore.addResult(result);
+      console.log('Benchmark completed successfully:', result);
     } catch (error) {
       if (error instanceof Error) {
         console.error('Benchmark error:', error);
+        // Show user-friendly error message
+        Alert.alert(
+          'Benchmark Failed',
+          `Failed to run benchmark: ${error.message}`,
+          [{text: 'OK'}]
+        );
       }
     } finally {
       clearInterval(memoryCheckInterval);
@@ -563,11 +572,13 @@ export const BenchmarkScreen: React.FC = observer(() => {
                   testID="start-test-button"
                   mode="contained"
                   onPress={runBenchmark}
-                  disabled={isRunning}
+                  disabled={isRunning || !modelStore.activeModel}
                   style={styles.button}
                   labelStyle={styles.buttonLabel}>
                   {isRunning
                     ? l10n.benchmark.buttons.runningTest
+                    : !modelStore.activeModel
+                    ? 'Select a Model First'
                     : 'Start Benchmark'}
                 </Button>
 

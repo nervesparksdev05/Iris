@@ -68,6 +68,10 @@ export const MarkdownView: React.FC<MarkdownViewProps> = React.memo(
           tagName: 'thinking',
           contentModel: HTMLContentModel.block,
         }),
+        hr: HTMLElementModel.fromCustomModel({
+          tagName: 'hr',
+          contentModel: HTMLContentModel.block,
+        }),
       }),
       [],
     );

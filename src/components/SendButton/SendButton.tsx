@@ -48,7 +48,7 @@ export const SendButton = ({
           style={{
             width: 30,
             height: 30,
-            tintColor: '#aaa',
+            tintColor: '#ffffff',
           }}
         />
         // <SendIcon

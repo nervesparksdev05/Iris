@@ -145,7 +145,7 @@ export const HeaderRight: React.FC = observer(() => {
     <View style={styles.headerRightContainer}>
       {uiStore.displayMemUsage && <UsageStats width={40} height={20} />}
       <IconButton
-        icon={() => <EditBoxIcon stroke={theme.colors.primary} />}
+        icon={() => <EditBoxIcon stroke="#ffffff" />}
         testID="reset-button"
         style={styles.chatBtn}
         onPress={() => {
@@ -167,7 +167,7 @@ export const HeaderRight: React.FC = observer(() => {
         <Menu.Item
           onPress={onPressGenerationSettings}
           label={l10n.components.headerRight.generationSettings}
-          leadingIcon={() => <SettingsIcon stroke={theme.colors.primary} />}
+          leadingIcon={() => <SettingsIcon stroke="#ffffff" />}
         />
         <Menu.Item
           disabled={models.length === 0}
@@ -181,7 +181,7 @@ export const HeaderRight: React.FC = observer(() => {
             />
           ))}
           label={l10n.components.headerRight.model}
-          leadingIcon={() => <GridIcon stroke={theme.colors.primary} />}
+          leadingIcon={() => <GridIcon stroke="#ffffff" />}
         />
         {session?.id && (
           <>
@@ -190,13 +190,13 @@ export const HeaderRight: React.FC = observer(() => {
               onPress={onPressDuplicate}
               label={l10n.components.headerRight.duplicateChatHistory}
               leadingIcon={() => (
-                <DuplicateIcon stroke={theme.colors.primary} />
+                <DuplicateIcon stroke="#ffffff" />
               )}
             />
             <Menu.Item
               onPress={onPressRename}
               label={l10n.common.rename}
-              leadingIcon={() => <EditIcon stroke={theme.colors.primary} />}
+              leadingIcon={() => <EditIcon stroke="#ffffff" />}
             />
             <Menu.Item
               onPress={onPressDelete}
@@ -226,7 +226,7 @@ export const HeaderRight: React.FC = observer(() => {
             />,
           ]}
           label={l10n.components.headerRight.export}
-          leadingIcon={() => <ShareIcon stroke={theme.colors.primary} />}
+          leadingIcon={() => <ShareIcon stroke="#ffffff" />}
         />
       </Menu> */}
       <ChatGenerationSettingsSheet

@@ -26,7 +26,9 @@ const ParametersPage = () => {
   };
 
   const saveChanges = () => {
-    console.log({thread, temperature, topP, topK});
+    console.log('Parameters saved:', {thread, temperature, topP, topK});
+    // You can add actual parameter saving logic here
+    // For example, save to AsyncStorage or update a global store
   };
 
   return (

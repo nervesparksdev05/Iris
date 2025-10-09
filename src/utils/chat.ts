@@ -19,7 +19,7 @@ export const assistant = {id: assistantId};
 export function convertToChatMessages(
   messages: MessageType.Any[],
 ): ChatMessage[] {
-  return messages
+  const chatMessages = messages
     .filter(message => message.type === 'text' && message.text !== undefined)
     .map(message => {
       return {
@@ -28,6 +28,24 @@ export function convertToChatMessages(
       } as ChatMessage;
     })
     .reverse();
+
+  // Ensure proper alternating pattern by merging consecutive messages from the same role
+  const mergedMessages: ChatMessage[] = [];
+  let lastRole: string | null = null;
+
+  for (const message of chatMessages) {
+    if (lastRole === message.role) {
+      // Merge with previous message from same role
+      const lastMessage = mergedMessages[mergedMessages.length - 1];
+      lastMessage.content += '\n\n' + message.content;
+    } else {
+      // Add as new message
+      mergedMessages.push({...message});
+      lastRole = message.role;
+    }
+  }
+
+  return mergedMessages;
 }
 
 /**
@@ -75,7 +93,21 @@ export async function applyChatTemplate(
       }) as string;
     }
   } catch (error) {
-    console.error('Error applying chat template:', error); // TODO: handle error
+    console.error('Error applying chat template:', error);
+    
+    // Validate message roles before applying template
+    const roles = messages.map(m => m.role);
+    const hasConsecutiveSameRole = roles.some((role, index) => 
+      index > 0 && role === roles[index - 1]
+    );
+    
+    if (hasConsecutiveSameRole) {
+      console.error('Chat template error: Conversation roles must alternate user/assistant/user/assistant/...');
+      console.error('Message roles:', roles);
+    }
+    
+    // Return a fallback formatted string
+    return messages.map(m => `${m.role}: ${m.content}`).join('\n\n');
   }
 
   return formattedChat || ' ';

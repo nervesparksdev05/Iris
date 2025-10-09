@@ -291,19 +291,21 @@ export class DownloadManager {
       this.downloadJobs.set(model.id, downloadJob);
       this.callbacks.onStart?.(model.id);
 
-      // Create the download task
+      // Create the download task with optimized settings for speed
       const downloadResult = RNFS.downloadFile({
         fromUrl: downloadUrl,
         toFile: destinationPath,
         background: uiStore.iOSBackgroundDownloading,
         discretionary: false,
-        progressInterval: 800,
-        // Proactively drop sluggish connections and retry via RNFS internals
-        readTimeout: 60000,
-        connectionTimeout: 60000,
+        progressInterval: 500, // More frequent progress updates
+        // Optimized timeouts for better speed
+        readTimeout: 120000, // Increased read timeout
+        connectionTimeout: 30000, // Faster connection timeout
         headers: {
           ...(authToken ? {Authorization: `Bearer ${authToken}`} : {}),
           Accept: 'application/octet-stream',
+          'Accept-Encoding': 'gzip, deflate', // Enable compression
+          'Connection': 'keep-alive', // Keep connection alive
         },
         begin: res => {
           console.log(`${TAG}: Download started for ID: ${model.id}`, {
@@ -430,12 +432,14 @@ export class DownloadManager {
         lastUpdateTime: Date.now(),
       };
 
-      // Start the download first to get the download ID
+      // Start the download first to get the download ID with optimized settings
       const response = await DownloadModule.startDownload(model.downloadUrl!, {
         destination: destinationPath,
         networkType: 'ANY',
-        priority: 1,
-        progressInterval: 1000,
+        priority: 1, // High priority for faster downloads
+        progressInterval: 500, // More frequent progress updates
+        readTimeout: 120000, // Increased read timeout
+        connectionTimeout: 30000, // Faster connection timeout
         ...(authToken ? {authToken} : {}),
       });
 

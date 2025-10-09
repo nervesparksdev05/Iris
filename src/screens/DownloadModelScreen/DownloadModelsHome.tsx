@@ -302,6 +302,30 @@ export const DownloadModelHome: React.FC<Props> = observer(
 
       if (filteredItems.length === 0) return null;
 
+      // Sort items to prioritize best models first
+      const sortedItems = filteredItems.sort((a, b) => {
+        const bestModels = [
+          'bartowski/gemma-2-2b-it-GGUF/gemma-2-2b-it-Q6_K.gguf',
+          'MaziyarPanahi/Phi-3.5-mini-instruct-GGUF/Phi-3.5-mini-instruct.Q4_K_M.gguf',
+          'Qwen/Qwen2.5-1.5B-Instruct-GGUF/qwen2.5-1.5b-instruct-q8_0.gguf',
+          'hugging-quants/Llama-3.2-1B-Instruct-Q8_0-GGUF/llama-3.2-1b-instruct-q8_0.gguf',
+        ];
+        
+        const aIndex = bestModels.indexOf(a.id);
+        const bIndex = bestModels.indexOf(b.id);
+        
+        // If both are in best models, sort by index
+        if (aIndex !== -1 && bIndex !== -1) {
+          return aIndex - bIndex;
+        }
+        // If only a is in best models, prioritize it
+        if (aIndex !== -1) return -1;
+        // If only b is in best models, prioritize it
+        if (bIndex !== -1) return 1;
+        // If neither are in best models, maintain original order
+        return 0;
+      });
+
       return (
         <ModelAccordion
           group={{...group, type: displayName}}
@@ -309,7 +333,7 @@ export const DownloadModelHome: React.FC<Props> = observer(
           onPress={() => {}} // disable toggle
         >
           <FlatList
-            data={filteredItems.slice(0, 3)}
+            data={sortedItems.slice(0, 4)} // Show 4 instead of 3 to include more options
             keyExtractor={subItem => subItem.id}
             renderItem={({item: subItem}) => (
               <DownloadModelScreen
@@ -334,11 +358,13 @@ export const DownloadModelHome: React.FC<Props> = observer(
       <View style={ModelStyles.container}>
         <View style={ModelStyles.modal}>
           <View style={ModelStyles.header}>
-            <Text style={ModelStyles.title}>Download Required</Text>
+            <Text style={ModelStyles.title}>Welcome to IRIS! 🚀</Text>
             <Text style={ModelStyles.subtitle}>
-              Don't close or minimize the app!
+              Choose your first AI model to get started
             </Text>
-            <Text style={ModelStyles.prompt}>Download at least 1 model</Text>
+            <Text style={ModelStyles.prompt}>
+              Recommended models are shown first - perfect for beginners!
+            </Text>
           </View>
 
           {/* Error Snackbar (if no modal error dialog) */}
@@ -404,41 +430,53 @@ export const DownloadModelHome: React.FC<Props> = observer(
 const ModelStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 10,
+    padding: 15,
   },
   modal: {
-    backgroundColor: '#2D3E50',
-    borderRadius: 10,
-    width: '93%',
-    maxHeight: '45%',
-    padding: 20,
+    backgroundColor: '#1a1a2e',
+    borderRadius: 20,
+    width: '95%',
+    maxHeight: '70%',
+    padding: 25,
     flexDirection: 'column',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 10,
+    borderWidth: 1,
+    borderColor: '#16213e',
   },
   header: {
-    marginBottom: 10,
+    marginBottom: 20,
     alignItems: 'center',
   },
   title: {
-    fontSize: 18,
+    fontSize: 24,
     color: '#FFFFFF',
     fontWeight: 'bold',
     textAlign: 'center',
+    marginBottom: 8,
   },
   subtitle: {
-    fontSize: 14,
-    color: '#FFFFFF',
+    fontSize: 16,
+    color: '#B0B0B0',
     textAlign: 'center',
-    marginTop: 4,
+    marginBottom: 8,
+    lineHeight: 22,
   },
   prompt: {
-    fontSize: 16,
-    color: '#fff',
+    fontSize: 14,
+    color: '#4A9EFF',
     textAlign: 'center',
-    marginTop: 8,
-    fontWeight: '900',
+    fontWeight: '600',
+    lineHeight: 20,
   },
   scrollContainer: {
     paddingTop: 10,

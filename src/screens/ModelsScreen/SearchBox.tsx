@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   searchIcon: {
     width: 20,
     height: 20,
-    tintColor: '#aaa',
+    tintColor: '#ffffff',
   },
   searchInput: {
     flex: 1,

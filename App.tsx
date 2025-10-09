@@ -241,10 +241,24 @@ const ChatScreenWrapper = observer(() => {
         setIsModelLoading(false);
       };
 
+      // Priority order: last used > best models > default > first available
       const lastUsedModel = availableModels.find(
         m => m.id === modelStore.lastUsedModelId,
       );
       if (lastUsedModel) return await tryLoadModel(lastUsedModel);
+
+      // Best SLM models in order of preference (smaller, faster, better quality)
+      const bestModels = [
+        'bartowski/gemma-2-2b-it-GGUF/gemma-2-2b-it-Q6_K.gguf', // Gemma-2-2b (best balance)
+        'MaziyarPanahi/Phi-3.5-mini-instruct-GGUF/Phi-3.5-mini-instruct.Q4_K_M.gguf', // Phi-3.5 mini (excellent reasoning)
+        'Qwen/Qwen2.5-1.5B-Instruct-GGUF/qwen2.5-1.5b-instruct-q8_0.gguf', // Qwen2.5-1.5B (multilingual)
+        'hugging-quants/Llama-3.2-1B-Instruct-Q8_0-GGUF/llama-3.2-1b-instruct-q8_0.gguf', // Llama-3.2-1B (fast)
+      ];
+
+      for (const bestModelId of bestModels) {
+        const bestModel = availableModels.find(m => m.id === bestModelId);
+        if (bestModel) return await tryLoadModel(bestModel);
+      }
 
       const defaultModel = availableModels.find(m => m.isDefault);
       if (defaultModel) return await tryLoadModel(defaultModel);

@@ -62,7 +62,7 @@ export const createStyles = (theme: MD3Theme) =>
       width: width * 0.08,
       height: width * 0.08,
       resizeMode: 'contain',
-      tintColor: '#aaa',
+      tintColor: '#ffffff',
     },
     separator: {
       height: 1,

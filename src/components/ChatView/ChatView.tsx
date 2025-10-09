@@ -411,7 +411,7 @@ export const ChatView = observer(
             handleCopy(selectedMessage);
             handleMenuDismiss();
           },
-          icon: () => <CopyIcon stroke={theme.colors.primary} />,
+          icon: () => <CopyIcon stroke="#ffffff" />,
           disabled: false,
         },
       ];
@@ -423,13 +423,13 @@ export const ChatView = observer(
             handleTryAgain(selectedMessage);
             handleMenuDismiss();
           },
-          icon: () => <RefreshIcon stroke={theme.colors.primary} />,
+          icon: () => <RefreshIcon stroke="#ffffff" />,
           disabled: !hasActiveModel,
         });
 
         baseItems.push({
           label: 'Regenerate with',
-          icon: () => <GridIcon stroke={theme.colors.primary} />,
+          icon: () => <GridIcon stroke="#ffffff" />,
           disabled: false,
           submenu: models.map(model => ({
             label: model.name,
@@ -449,7 +449,7 @@ export const ChatView = observer(
             handleEdit(selectedMessage);
             handleMenuDismiss();
           },
-          icon: () => <PencilLineIcon stroke={theme.colors.primary} />,
+          icon: () => <PencilLineIcon stroke="#ffffff" />,
           disabled: !hasActiveModel,
         });
       }

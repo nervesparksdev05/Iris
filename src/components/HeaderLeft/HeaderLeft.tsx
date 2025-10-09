@@ -17,7 +17,7 @@ export const HeaderLeft: React.FC = () => {
       onPress={() => navigation.navigate(ROUTES.SIDEBAR)}>
       <Image
         source={require('../../assets/appIcons/settingIcon.png')}
-        style={{width: 24, height: 24, tintColor: theme.colors.primary}}
+        style={{width: 24, height: 24, tintColor: '#ffffff'}}
         resizeMode="contain"
       />
     </TouchableOpacity>

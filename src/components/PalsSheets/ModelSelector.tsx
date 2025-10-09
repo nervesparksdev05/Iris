@@ -69,7 +69,7 @@ export const ModelSelector = observer(
                 <PaperTextInput.Icon
                   onPress={() => setMenuVisible(true)}
                   icon={() => (
-                    <ChevronRightIcon stroke={theme.colors.primary} />
+                    <ChevronRightIcon stroke="#ffffff" />
                   )}
                 />
               }

@@ -144,7 +144,7 @@ export const createStyles = ({ theme }: { theme: Theme }) =>
       paddingHorizontal: width * 0.035,
       borderRadius: width * 0.025,
       marginRight: width * 0.02,
-      maxWidth: '75%',
+      maxWidth: '80%',
       marginTop: height * 0.01,
     },
     userIcon: {
@@ -169,7 +169,7 @@ export const createStyles = ({ theme }: { theme: Theme }) =>
       paddingVertical: height * 0.012,
       paddingHorizontal: width * 0.035,
       borderRadius: width * 0.025,
-      maxWidth: '75%',
+      maxWidth: '85%',
       marginTop: height * 0.005,
     },
     loadingContainer: {

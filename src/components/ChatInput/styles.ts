@@ -44,7 +44,7 @@ export const createStyles = ({
       borderRadius: 16,
       height: height * 0.07,
       marginLeft: width * 0.015,
-      color: '#fff',
+      color: '#ffffff',
       width: width * 0.7,
     },
     footerContainer: {
@@ -59,11 +59,14 @@ export const createStyles = ({
       paddingVertical: height * 0.012,
       gap: width * 0.025,
     },
+    micButton: {
+      padding: 2,
+      marginLeft: -width * 0.07,
+    },
     imageIcon: {
       width: width * 0.11,
       height: width * 0.11,
-      tintColor: '#aaa',
-      marginLeft: -width * 0.07,
+      tintColor: '#ffffff',
     },
     marginRight: {
       marginRight: width * 0.04,

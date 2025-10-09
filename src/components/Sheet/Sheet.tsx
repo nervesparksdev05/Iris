@@ -103,7 +103,7 @@ export const Sheet = forwardRef(
             style={styles.closeBtn}
             onPress={onDismiss}
             hitSlop={10}>
-            <CloseIcon stroke={theme.colors.primary} />
+            <CloseIcon stroke="#ffffff" />
           </TouchableOpacity>
         </View>
         {children}
